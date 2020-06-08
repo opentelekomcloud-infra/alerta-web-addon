@@ -11,7 +11,7 @@ app.config.from_object(__name__)
 # enable CORS
 CORS(app)
 
-@app.route('/test', methods=['GET'])
+@app.route('/', methods=['GET'])
 def root():
     return jsonify('200')
 
