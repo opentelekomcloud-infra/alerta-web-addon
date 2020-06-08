@@ -3,8 +3,8 @@
   hosts: worker_host
   become: yes
   tasks:
-    -name: install nginx role
-    command: ansible-galaxy install geerlingguy.nginx
+    - name: install nginx role
+      shell: "ansible-galaxy install geerlingguy.nginx"
 
 - name: Install and setup nginx
   hosts: worker_host
