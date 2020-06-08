@@ -1,3 +1,4 @@
+---
 - name: Install role from Ansible Galaxy
   hosts: worker_host
   become: yes
