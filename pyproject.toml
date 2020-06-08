@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "alerta-web-addon"
+version = "0.1.0"
+description = "single web page server to configure alerta templates and topics"
+authors = ["OTC customer service monitoring team"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/opentelekomcloud-infra/alerta-web-addon"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+Flask = "^1.0.2"
+Flask-Cors = "^3.0.4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.3"
+pylint = "^2.4"
+
+[build-system]
+requires = ["poetry>=1.0"]
+build-backend = "poetry.masonry.api"
