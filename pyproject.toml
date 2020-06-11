@@ -9,8 +9,11 @@ repository = "https://github.com/opentelekomcloud-infra/alerta-web-addon"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-Flask = "^1.0.2"
-Flask-Cors = "^3.0.4"
+Flask = "^1.1.1"
+Flask-Bootstrap = "^3.3.7"
+Flask-SQLAlchemy = "^2.4.3"
+Flask-WTF = "^0.14.3"
+psycopg2-binary = "^2.8.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3"

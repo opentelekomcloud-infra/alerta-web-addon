@@ -1,0 +1,45 @@
+body {
+  background: #303030;
+  color: #ffffff;
+}
+
+html {
+    font-size: 14px;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    font-family: Roboto,sans-serif!important;
+}
+
+.title {
+    font-size: 20px!important;
+    font-weight: 500;
+    line-height: 1!important;
+    letter-spacing: .02em!important;
+    font-family: Roboto,sans-serif!important;
+}
+tbody {
+    display:block;
+    height:300px;
+    overflow:auto;
+}
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+    background-color: #424242
+}
+thead {
+}
+.table-hover tbody tr:hover td {
+    background: #595959;
+}
+
+.modal-content {
+  background-color: #424242;
+}
+.modal-title {
+  text-align: left;
+}
