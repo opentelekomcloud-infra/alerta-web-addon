@@ -1,0 +1,52 @@
+<div>
+  <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseTopics" aria-expanded="true" aria-controls="collapseExample">
+    Alerta Topics
+  </button>
+  <div class="collapse" id="collapseTopics">
+    <div class="card card-body bg-dark">
+      {% if topics|length < 1 %}
+      <p>There is nothing to show.</p>
+      {% else %}
+      <div>
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th>Topic ID</th>
+              <th>Topic Name</th>
+              <th>Zulip To</th>
+              <th>Zulip Subject</th>
+              <th>Template</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in topics %}
+            <tr>
+              <td id="topic_id">{{ item.topic_id }}</td>
+              <td class="text-left" id="topic_name">{{ item.topic_name }}</td>
+              <td class="text-left" id="zulip_to">{{ item.zulip_to }}</td>
+              <td class="text-left" id="zulip_subject">{{ item.zulip_subject }}</td>
+              <td class="text-left" id="topic_template">{{ item.template_name }}</td>
+              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_update', id=item.topic_id) }}" role="button" href="#">Update</a></td>
+              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_delete', id=item.topic_id) }}" role="button" href="#">Delete</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+
+        <form action="/" method="POST">
+          <div class="form-group">
+            <label for="newTopicName">New Record:</label>
+            <input type="text" class="form-control" name="topic_name" id="newTopicName" placeholder="Enter Topic Name">
+            <input type="text" class="form-control" name="zulip_to" id="newTopicZTo" placeholder="Enter Zulip To">
+            <input type="text" class="form-control" name="zulip_subject" id="newTopicZSubject" placeholder="Enter Zulip Subject">
+            <input type="text" class="form-control" name="template_id" id="newTopicTemplate" placeholder="Enter Template Id">
+          </div>
+          <button type="submit" class="btn btn-secondary">Add</button>
+        </form>
+    </div>
+  </div>
+</div>

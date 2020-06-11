@@ -5,10 +5,11 @@ from threading import Thread
 from flask import Flask, jsonify
 from flask import render_template, request, redirect
 from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from forms import EnvUpdateForm
+from model import Environments, Topics, Templates, TopicsToSkip
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
 AGP.add_argument('--port', help='port to be listened', default=23456, type=int)
@@ -18,22 +19,12 @@ args, _ = AGP.parse_known_args()
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = args.dbstring
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 Bootstrap(app)
 
-
-class Environments(db.Model):
-    __tablename__ = 'alerta_environments'
-    id = Column(Integer, primary_key=True)
-    name = Column(String())
-
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return f"<Topic {self.name}>"
+engine = create_engine(args.dbstring, echo=True)
+Session = sessionmaker(bind=engine)
+Session.configure(bind=engine)
+session = Session()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -43,37 +34,42 @@ def index():
             name = request.form['name']
             new_environment = Environments(name=name)
             try:
-                db.session.add(new_environment)
-                db.session.commit()
+                session.add(new_environment)
+                session.commit()
                 return redirect('/')
             except Exception as Ex:
                 return "There was a problem adding new record."
         else:
             return "Empty environment name."
     elif request.method == 'GET':
-        env = Environments.query.order_by(Environments.id).all()
-        return render_template('index.html', env=env)
+        env = session.query(Environments).order_by(Environments.id).all()
+        topics = session.query(
+            Topics.topic_id,
+            Topics.topic_name,
+            Topics.zulip_to,
+            Topics.zulip_subject,
+            Templates.template_name)\
+            .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
+        return render_template('index.html', env=env, topics=topics)
 
 
-@app.route('/env/delete/<int:id>')
+@app.route('/env/delete/<int:id>', methods=['GET', 'POST'])
 def env_delete(id):
-    environment = Environments.query.get_or_404(id)
-
-    try:
-        db.session.delete(environment)
-        db.session.commit()
-        return redirect('/')
-    except:
-        return "There was a problem deleting data."
+    environment = session.query(Environments).get(ident=id)
+    if request.method == 'POST':
+        session.delete(environment)
+        session.commit()
+        return jsonify(status='ok')
+    return render_template('/snippets/env_delete.html', title="Deleting Environment Permanently", env=environment)
 
 
 @app.route('/env/update/<int:id>', methods=['GET', 'POST'])
 def env_update(id):
-    environment = Environments.query.filter_by(id=id).first_or_404()
+    environment = session.query(Environments).get(ident=id)
     form = EnvUpdateForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
         environment.name = form.name.data
-        db.session.commit()
+        session.commit()
         return jsonify(status='ok')
     elif request.method == 'GET':
         form.name.data = environment.name

@@ -1,10 +1,11 @@
 from sqlalchemy import ForeignKey, Column, Integer, String, Boolean
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from server import db
+Base = declarative_base()
 
 
-class Environments(db.Model):
+class Environments(Base):
     __tablename__ = 'alerta_environments'
     id = Column(Integer, primary_key=True)
     name = Column(String())
@@ -15,10 +16,10 @@ class Environments(db.Model):
         self.name = name
 
     def __repr__(self):
-        return f"<Topic {self.name}>"
+        return f"<Environment {self.name}>"
 
 
-class Templates(db.Model):
+class Templates(Base):
     __tablename__ = 'templates'
     template_id = Column(Integer, primary_key=True, autoincrement=True)
     template_name = Column(String())
@@ -31,10 +32,10 @@ class Templates(db.Model):
         self.template_data = template_data
 
     def __repr__(self):
-        return f"<Topic {self.template_name, self.template_data}>"
+        return f"<Template {self.template_name, self.template_data}>"
 
 
-class Topics(db.Model):
+class Topics(Base):
     __tablename__ = 'topics'
 
     topic_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -55,7 +56,7 @@ class Topics(db.Model):
         return f"<Topic {self.topic_name, self.zulip_to, self.zulip_subject, self.templ_id}>"
 
 
-class TopicsToSkip(db.Model):
+class TopicsToSkip(Base):
     __tablename__ = 'skip_topics'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -69,4 +70,4 @@ class TopicsToSkip(db.Model):
         self.topic_id = topic_id
 
     def __repr__(self):
-        return f"<Topic {self.skip, self.environment_id, self.topic_id}>"
+        return f"<Skip {self.skip, self.environment_id, self.topic_id}>"
