@@ -1,0 +1,56 @@
+<div>
+  <div id="accordionSkip">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseSkip" aria-expanded="true" aria-controls="collapseSkip">
+          Alerta Topics Blackout Status
+        </button>
+      </h5>
+    </div>
+
+  <div id="collapseSkip" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionSkip">
+    <div class="card card-body modal-content">
+      {% if skip|length < 1 %}
+      <p>There is nothing to show.</p>
+      {% else %}
+      <div>
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th>Skip Topic ID</th>
+              <th>Skip</th>
+              <th>Environment</th>
+              <th>Topic</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in skip %}
+            <tr>
+              <td id="skip_id">{{ item.id }}</td>
+              <td class="text-left" id="topic_skip">{{ item.skip }}</td>
+              <td class="text-left" id="zulip_to">{{ item.environment_id }}</td>
+              <td class="text-left" id="zulip_subject">{{ item.topic_id }}</td>
+              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_update', id=item.id) }}" role="button" href="#">Update</a></td>
+              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_delete', id=item.id) }}" role="button" href="#">Delete</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+
+        <form action="/" method="POST">
+          <div class="form-group">
+            <label for="skipValue">New Record:</label>
+            <input type="text" class="form-control" name="skip" id="skipValue" placeholder="Select skip value">
+            <input type="text" class="form-control" name="skipTopicId" id="skipTopicId" placeholder="Select Topic Name">
+            <input type="text" class="form-control" name="skipEnvId" id="skipEnvId" placeholder="Select Environment Name">
+          </div>
+          <button type="submit" class="btn btn-secondary">Add</button>
+        </form>
+    </div>
+  </div>
+</div>

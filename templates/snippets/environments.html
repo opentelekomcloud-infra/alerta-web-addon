@@ -1,9 +1,16 @@
 <div>
-  <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseEnvironments" aria-expanded="true" aria-controls="collapseExample">
-    Alerta Environments
-  </button>
-  <div class="collapse" id="collapseEnvironments">
-    <div class="card card-body bg-dark">
+  <div id="accordionEnv">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseEnvs" aria-expanded="true" aria-controls="collapseEnvs">
+          Alerta Environments
+        </button>
+      </h5>
+    </div>
+
+  <div id="collapseEnvs" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionEnv">
+    <div class="card card-body modal-content">
       {% if env|length < 1 %}
       <p>There is nothing to show.</p>
       {% else %}
@@ -31,10 +38,10 @@
         {% endif %}
       </div>
 
-        <form action="/" method="POST">
+        <form action="/env/add" method="POST">
           <div class="form-group">
             <label for="newRecord">New Record:</label>
-            <input type="text" class="form-control" name="name" id="newRecord" placeholder="Enter Environment Name">
+            <input type="text" class="form-control" name="NewEnvName" id="newRecord" placeholder="Enter Environment Name">
           </div>
           <button type="submit" class="btn btn-secondary">Add</button>
         </form>

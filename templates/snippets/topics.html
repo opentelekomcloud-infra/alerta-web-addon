@@ -1,9 +1,16 @@
 <div>
-  <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseTopics" aria-expanded="true" aria-controls="collapseExample">
-    Alerta Topics
-  </button>
-  <div class="collapse" id="collapseTopics">
-    <div class="card card-body bg-dark">
+  <div id="accordionTop">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTopics" aria-expanded="true" aria-controls="collapseTopics">
+          Alerta Topics
+        </button>
+      </h5>
+    </div>
+
+  <div id="collapseTopics" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionTop">
+    <div class="card card-body modal-content">
       {% if topics|length < 1 %}
       <p>There is nothing to show.</p>
       {% else %}
@@ -28,8 +35,8 @@
               <td class="text-left" id="zulip_to">{{ item.zulip_to }}</td>
               <td class="text-left" id="zulip_subject">{{ item.zulip_subject }}</td>
               <td class="text-left" id="topic_template">{{ item.template_name }}</td>
-              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_update', id=item.topic_id) }}" role="button" href="#">Update</a></td>
-              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_delete', id=item.topic_id) }}" role="button" href="#">Delete</a></td>
+              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('topic_update', id=item.topic_id) }}" role="button" href="#">Update</a></td>
+              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('topic_delete', id=item.topic_id) }}" role="button" href="#">Delete</a></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -37,13 +44,18 @@
         {% endif %}
       </div>
 
-        <form action="/" method="POST">
+        <form action="/topic/add" method="POST">
           <div class="form-group">
             <label for="newTopicName">New Record:</label>
-            <input type="text" class="form-control" name="topic_name" id="newTopicName" placeholder="Enter Topic Name">
-            <input type="text" class="form-control" name="zulip_to" id="newTopicZTo" placeholder="Enter Zulip To">
-            <input type="text" class="form-control" name="zulip_subject" id="newTopicZSubject" placeholder="Enter Zulip Subject">
-            <input type="text" class="form-control" name="template_id" id="newTopicTemplate" placeholder="Enter Template Id">
+            <input type="text" class="form-control" name="newTopicName" id="newTopicName" placeholder="Enter Topic Name">
+            <input type="text" class="form-control" name="newTopicZulipTo" id="newTopicZulipTo" placeholder="Enter Zulip To">
+            <input type="text" class="form-control" name="newTopicZulipSubject" id="newTopicZulipSubject" placeholder="Enter Zulip Subject">
+            <label for="topicFormControlSelect2">Select template</label>
+            <select class="form-control" id="topicFormControlSelect2" name="newTopicTemplate">
+              {% for item in templates %}
+                  <option value="{{ item.template_name }}" SELECTED>{{ item.template_name }}</option>
+              {% endfor %}
+            </select>
           </div>
           <button type="submit" class="btn btn-secondary">Add</button>
         </form>

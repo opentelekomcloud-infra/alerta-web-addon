@@ -12,11 +12,12 @@ class Environments(Base):
 
     children = relationship("TopicsToSkip")
 
-    def __init__(self, name):
+    def __init__(self, id, name):
+        self.id = id
         self.name = name
 
     def __repr__(self):
-        return f"<Environment {self.name}>"
+        return f"<Environment {self.id, self.name}>"
 
 
 class Templates(Base):
@@ -46,14 +47,15 @@ class Topics(Base):
 
     children = relationship("TopicsToSkip")
 
-    def __init__(self, topic_name, zulip_to, zulip_subject, templ_id):
+    def __init__(self, topic_id, topic_name, zulip_to, zulip_subject, templ_id):
+        self.topic_id = topic_id
         self.topic_name = topic_name
         self.zulip_to = zulip_to
         self.zulip_subject = zulip_subject
         self.templ_id = templ_id
 
     def __repr__(self):
-        return f"<Topic {self.topic_name, self.zulip_to, self.zulip_subject, self.templ_id}>"
+        return f"<Topic {self.topic_id, self.topic_name, self.zulip_to, self.zulip_subject, self.templ_id}>"
 
 
 class TopicsToSkip(Base):
