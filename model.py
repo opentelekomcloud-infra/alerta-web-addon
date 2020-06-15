@@ -28,12 +28,13 @@ class Templates(Base):
 
     children = relationship("Topics")
 
-    def __init__(self, template_name, template_data):
+    def __init__(self, template_id, template_name, template_data):
+        self.template_id = template_id
         self.template_name = template_name
         self.template_data = template_data
 
     def __repr__(self):
-        return f"<Template {self.template_name, self.template_data}>"
+        return f"<Template {self.template_id, self.template_name, self.template_data}>"
 
 
 class Topics(Base):

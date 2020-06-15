@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from forms import EnvUpdateForm, TopicUpdateForm
+from forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateForm
 from model import Environments, Topics, Templates, TopicsToSkip
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
@@ -39,7 +39,13 @@ def index():
             Templates.template_name) \
             .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
         templates = session.query(Templates).order_by(Templates.template_id).all()
-        topics_to_skip = session.query(TopicsToSkip).order_by(TopicsToSkip.topic_id).all()
+        topics_to_skip = session.query(
+            TopicsToSkip.id,
+            TopicsToSkip.skip,
+            Environments.name,
+            Topics.topic_name) \
+            .filter(TopicsToSkip.environment_id == Environments.id, TopicsToSkip.topic_id == Topics.topic_id) \
+            .order_by(Environments.id).all()
         return render_template('index.html', env=env, topics=topics, templates=templates, skip=topics_to_skip)
 
 
@@ -81,7 +87,7 @@ def env_update(id):
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
-    return render_template('/snippets/env_update.html', title="Edit environment", form=form)
+    return render_template('/snippets/env_update.html', title="Edit Environment", form=form)
 
 
 @app.route('/topic/add', methods=['POST'])
@@ -126,7 +132,6 @@ def topic_update(id):
         session.commit()
         return jsonify(status='ok')
     elif request.method == 'GET':
-        templates = session.query(Templates).order_by(Templates.template_id).all()
         form.ftopic_name.data = topic.topic_name
         form.fzulip_to.data = topic.zulip_to
         form.fzulip_subject.data = topic.zulip_subject
@@ -138,7 +143,51 @@ def topic_update(id):
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
-    return render_template('/snippets/topic_update.html', title="Edit environment", form=form, templates=templates)
+    return render_template('/snippets/topic_update.html', title="Edit Topic", form=form)
+
+
+@app.route('/template/add', methods=['POST'])
+def template_add():
+    if request.form['newTemplateName'] != '' and request.form['newTemplateData'] != '':
+        new_topic = Templates(template_id=get_last_id(Templates) + 1,
+                              template_name=request.form['newTemplateName'],
+                              template_data=request.form['newTemplateData'])
+        try:
+            session.add(new_topic)
+            session.commit()
+            return redirect('/')
+        except Exception as Ex:
+            return "There was a problem adding new record."
+    else:
+        return "Empty template name."
+
+
+@app.route('/template/delete/<int:id>', methods=['GET', 'POST'])
+def template_delete(id):
+    template = session.query(Templates).get(ident=id)
+    if request.method == 'POST':
+        session.delete(template)
+        session.commit()
+        return jsonify(status='ok')
+    return render_template('/snippets/template_delete.html', title="Deleting Template Permanently", template=template)
+
+
+@app.route('/template/update/<int:id>', methods=['GET', 'POST'])
+def template_update(id):
+    template = session.query(Templates).get(ident=id)
+    form = TemplateUpdateForm(request.form, csrf_enabled=False)
+    if form.validate_on_submit():
+        template.template_name = form.ftemplate_name.data
+        template.template_data = form.ftemplate_data.data
+        session.commit()
+        return jsonify(status='ok')
+    elif request.method == 'GET':
+        form.ftemplate_name.data = template.template_name
+        form.ftemplate_data.data = template.template_data
+    else:
+        data = json.dumps(form.errors, ensure_ascii=False)
+        return jsonify(data)
+    return render_template('/snippets/template_update.html', title="Edit Template", form=form)
 
 
 def get_last_id(table):

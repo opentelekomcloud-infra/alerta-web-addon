@@ -30,9 +30,9 @@
             {% for item in skip %}
             <tr>
               <td id="skip_id">{{ item.id }}</td>
-              <td class="text-left" id="topic_skip">{{ item.skip }}</td>
-              <td class="text-left" id="zulip_to">{{ item.environment_id }}</td>
-              <td class="text-left" id="zulip_subject">{{ item.topic_id }}</td>
+              <td class="text-left" id="skip">{{ item.skip }}</td>
+              <td class="text-left" id="skipEnv">{{ item.name }}</td>
+              <td class="text-left" id="skipTopic">{{ item.topic_name }}</td>
               <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_update', id=item.id) }}" role="button" href="#">Update</a></td>
               <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_delete', id=item.id) }}" role="button" href="#">Delete</a></td>
             </tr>

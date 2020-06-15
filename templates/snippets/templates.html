@@ -31,8 +31,8 @@
               <td id="template_id">{{ item.template_id }}</td>
               <td class="text-left" id="template_name">{{ item.template_name }}</td>
               <td class="text-left" id="template_data">{{ item.template_data }}</td>
-              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_update', id=item.template_id) }}" role="button" href="#">Update</a></td>
-              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('env_delete', id=item.template_id) }}" role="button" href="#">Delete</a></td>
+              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('template_update', id=item.template_id) }}" role="button" href="#">Update</a></td>
+              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('template_delete', id=item.template_id) }}" role="button" href="#">Delete</a></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -40,12 +40,12 @@
         {% endif %}
       </div>
 
-        <form action="/" method="POST">
+        <form action="/template/add" method="POST">
           <div class="form-group">
             <label for="newTemplateName">New Record:</label>
-            <input type="text" class="form-control" name="template_name" id="newTemplateName" placeholder="Enter Template Name">
-            <label for="skipControlTextarea1">Template Data</label>
-            <textarea class="form-control" id="skipControlTextarea1" rows="3" placeholder="Enter Template Data"></textarea>
+            <input type="text" class="form-control" name="newTemplateName" id="newTemplateName" placeholder="Enter Template Name">
+            <label for="newTemplateTextarea">Template Data</label>
+            <textarea class="form-control" id="newTemplateTextarea" name="newTemplateData" rows="3" placeholder="Enter Template Data"></textarea>
           </div>
           <button type="submit" class="btn btn-secondary">Add</button>
         </form>

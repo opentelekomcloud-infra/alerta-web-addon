@@ -1,15 +1,13 @@
 {% from 'bootstrap/wtf.html' import form_field %}
-<form id="ModalForm" name="topicEditForm" class="form" method="post">
+<form id="ModalForm" name="envEditForm" class="form" method="post">
     <div class="modal-header">
         <h4 class="modal-title">{{ title }}</h4>
     </div>
     <div class="modal-body">
 
         {{ form.hidden_tag() }}
-        {{ form_field(form.ftopic_name) }}
-        {{ form_field(form.fzulip_to) }}
-        {{ form_field(form.fzulip_subject) }}
-        {{ form_field(form.ftemplate) }}
+        {{ form_field(form.ftemplate_name) }}
+        {{ form_field(form.ftemplate_data) }}
 
     </div>
     <div class="modal-footer">
