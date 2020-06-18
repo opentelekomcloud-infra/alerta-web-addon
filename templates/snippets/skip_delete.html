@@ -1,0 +1,15 @@
+<form id="ModalForm" name="envDelForm" class="form" method="post">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ title }}</h4>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure that you want to delete next blackout status for topic?</p>
+      <h3>Skip ID: {{skip.id}}</h3>
+      <h3>Environment: {{env}}</h3>
+      <h3>Topic: {{topic}}</h3>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button id="submit" type="submit" class="btn btn-warning">Delete</button>
+    </div>
+</form>

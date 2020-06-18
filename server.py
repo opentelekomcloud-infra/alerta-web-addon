@@ -8,8 +8,8 @@ from flask_bootstrap import Bootstrap
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateForm
-from model import Environments, Topics, Templates, TopicsToSkip
+from forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateForm, SkipUpdateForm
+from model import Environments, Topics, Templates, TopicsToSkip, get_pk_name, get_last_id
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
 AGP.add_argument('--port', help='port to be listened', default=23456, type=int)
@@ -53,7 +53,7 @@ def index():
 def env_add():
     if request.form['NewEnvName'] != '':
         name = request.form['NewEnvName']
-        new_environment = Environments(id=get_last_id(Environments) + 1, name=name)
+        new_environment = Environments(id=get_last_id(session, Environments)[0] + 1, name=name)
         try:
             session.add(new_environment)
             session.commit()
@@ -94,7 +94,7 @@ def env_update(id):
 def topic_add():
     if request.form['newTopicName'] != '' and request.form['newTopicZulipTo'] != '' \
             and request.form['newTopicZulipSubject'] != '' and request.form['newTopicTemplate'] != '':
-        new_topic = Topics(topic_id=get_last_id(Topics) + 1,
+        new_topic = Topics(topic_id=get_last_id(session, Topics)[0] + 1,
                            topic_name=request.form['newTopicName'],
                            zulip_to=request.form['newTopicName'],
                            zulip_subject=request.form['newTopicName'],
@@ -138,8 +138,8 @@ def topic_update(id):
         form.ftemplate.choices = [(template.template_id, template.template_name) for template in
                                   session.query(Templates.template_id, Templates.template_name).
                                       order_by(Templates.template_id).all()]
-        form.ftemplate.default = session.query(Templates.template_name) \
-            .filter(topic.templ_id == Templates.template_id).scalar()
+        form.ftemplate.choices.insert(0, form.ftemplate.choices.pop(
+            [x for x, y in enumerate(form.ftemplate.choices) if y[0] == topic.templ_id][0]))
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
@@ -149,7 +149,7 @@ def topic_update(id):
 @app.route('/template/add', methods=['POST'])
 def template_add():
     if request.form['newTemplateName'] != '' and request.form['newTemplateData'] != '':
-        new_topic = Templates(template_id=get_last_id(Templates) + 1,
+        new_topic = Templates(template_id=get_last_id(session, Templates)[0] + 1,
                               template_name=request.form['newTemplateName'],
                               template_data=request.form['newTemplateData'])
         try:
@@ -190,8 +190,62 @@ def template_update(id):
     return render_template('/snippets/template_update.html', title="Edit Template", form=form)
 
 
-def get_last_id(table):
-    return session.query(table).count()
+@app.route('/skip/add', methods=['POST'])
+def skip_add():
+    if request.form['newSkip'] != '' and request.form['newSkipTopic'] != '' and request.form['newSkipEnv'] != '':
+        new_skip = TopicsToSkip(id=get_last_id(session, TopicsToSkip)[0] + 1,
+                                skip=bool(int(request.form['newSkip'])),
+                                environment_id=session.query(Environments.id).
+                                filter(request.form['newSkipEnv'] == Environments.name).scalar(),
+                                topic_id=session.query(Topics.topic_id).
+                                filter(request.form['newSkipTopic'] == Topics.topic_name).scalar())
+        try:
+            session.add(new_skip)
+            session.commit()
+            return redirect('/')
+        except Exception as Ex:
+            return "There was a problem adding new record."
+    else:
+        return "Empty values."
+
+
+@app.route('/skip/delete/<int:id>', methods=['GET', 'POST'])
+def skip_delete(id):
+    skip = session.query(TopicsToSkip).get(ident=id)
+    topic = session.query(Topics.topic_name).filter(skip.topic_id == Topics.topic_id).scalar()
+    env = session.query(Environments.name).filter(skip.environment_id == Environments.id).scalar()
+    if request.method == 'POST':
+        session.delete(skip)
+        session.commit()
+        return jsonify(status='ok')
+    return render_template('/snippets/skip_delete.html', title="Deleting Blackout Status for Topic Permanently",
+                           skip=skip, topic=topic, env=env)
+
+
+@app.route('/skip/update/<int:id>', methods=['GET', 'POST'])
+def skip_update(id):
+    skip = session.query(TopicsToSkip).get(ident=id)
+    form = SkipUpdateForm(request.form, csrf_enabled=False)
+    if form.validate_on_submit():
+        skip.skip = form.fskip.data
+        skip.environment_id = int(form.fenvironment_name.data)
+        skip.topic_id = int(form.ftopic_name.data)
+        session.commit()
+        return jsonify(status='ok')
+    elif request.method == 'GET':
+        form.fskip.data = skip.skip
+        form.fenvironment_name.choices = [(env.id, env.name) for env in session.query(Environments)
+            .order_by(Environments.id).all()]
+        form.fenvironment_name.choices.insert(0, form.fenvironment_name.choices.pop(
+            [x for x, y in enumerate(form.fenvironment_name.choices) if y[0] == skip.environment_id][0]))
+        form.ftopic_name.choices = [(topic.topic_id, topic.topic_name) for topic in session.query(Topics)
+            .order_by(Topics.topic_id).all()]
+        form.ftopic_name.choices.insert(0, form.ftopic_name.choices.pop(
+            [x for x, y in enumerate(form.ftopic_name.choices) if y[0] == skip.topic_id][0]))
+    else:
+        data = json.dumps(form.errors, ensure_ascii=False)
+        return jsonify(data)
+    return render_template('/snippets/skip_update.html', title="Edit Blackout Status for Topic", form=form)
 
 
 def main():
