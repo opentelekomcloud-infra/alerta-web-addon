@@ -7,5 +7,5 @@ all:
       ansible_python_interpreter: "/usr/bin/env python3"
     worker_host:
       ansible_user: "linux"
-      ansible_host: "{{ host_address }}"
-      ansible_ssh_private_key_file: "{{ host_key }}"
+      ansible_host: "{{ worker_address }}"
+      ansible_ssh_private_key_file: "{{ worker_key }}"
