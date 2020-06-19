@@ -1,15 +1,10 @@
-<div>
-  <div id="accordionTemp">
-  <div class="card">
-    <div class="card-header" id="headingOne">
-      <h5 class="mb-0">
-        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTemplates" aria-expanded="true" aria-controls="collapseTemplates">
-          Alerta Templates
-        </button>
-      </h5>
-    </div>
+{% extends 'base.html' %}
+{% block content %}
 
-  <div id="collapseTemplates" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionTemp">
+{% include 'snippets/sidebar.html' %}
+<div class="page-content p-1" id="content">
+  <div class="v-card__title title">Alerta Templates</div>
+
     <div class="card card-body modal-content">
       {% if templates|length < 1 %}
       <p>There is nothing to show.</p>
@@ -50,5 +45,5 @@
           <button type="submit" class="btn btn-secondary">Add</button>
         </form>
     </div>
-  </div>
 </div>
+{% endblock content %}

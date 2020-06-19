@@ -1,11 +1,5 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <p class="h3 px-2">Data lookup</p>
-  <div class="px-2">
-    {% include 'snippets/environments.html' %}<br>
-    {% include 'snippets/topics.html' %}<br>
-    {% include 'snippets/topics_skip.html' %}<br>
-    {% include 'snippets/templates.html' %}<br>
-  </div>
+{% include 'snippets/sidebar.html' %}
 {% endblock content %}

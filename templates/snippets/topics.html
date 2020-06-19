@@ -1,15 +1,10 @@
-<div>
-  <div id="accordionTop">
-  <div class="card">
-    <div class="card-header" id="headingOne">
-      <h5 class="mb-0">
-        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTopics" aria-expanded="true" aria-controls="collapseTopics">
-          Alerta Topics
-        </button>
-      </h5>
-    </div>
+{% extends 'base.html' %}
+{% block content %}
 
-  <div id="collapseTopics" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionTop">
+{% include 'snippets/sidebar.html' %}
+<div class="page-content p-1" id="content">
+  <div class="v-card__title title">Alerta Topics</div>
+
     <div class="card card-body modal-content">
       {% if topics|length < 1 %}
       <p>There is nothing to show.</p>
@@ -61,4 +56,4 @@
         </form>
     </div>
   </div>
-</div>
+{% endblock content %}

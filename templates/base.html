@@ -4,10 +4,13 @@
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sonsie+One&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="alternate" type="application/json+oembed" href="https://codepen.io/api/oembed?url=https%3A%2F%2Fcodepen.io%2Fettrics%2Fpen%2FogRaRv&format=json" title="Vertical Layout with Navigation" />
   {% if title %}
   <title>{{ title }} - Alerta CRUD</title>
   {% else %}
@@ -63,6 +66,14 @@
             })
         });
     });
+  </script>
+  <script>
+    $(function() {
+    // Sidebar toggle behavior
+    $('#sidebarCollapse').on('click', function() {
+        $('#sidebar, #content').toggleClass('active');
+    });
+  });
   </script>
 </body>
 

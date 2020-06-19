@@ -30,7 +30,19 @@ session = Session()
 @app.route('/', methods=['GET'])
 def index():
     if request.method == 'GET':
+        return render_template('index.html')
+
+
+@app.route('/environments', methods=['GET'])
+def environments():
+    if request.method == 'GET':
         env = session.query(Environments).order_by(Environments.id).all()
+        return render_template('snippets/environments.html', env=env)
+
+
+@app.route('/topics', methods=['GET'])
+def topics():
+    if request.method == 'GET':
         topics = session.query(
             Topics.topic_id,
             Topics.topic_name,
@@ -39,6 +51,19 @@ def index():
             Templates.template_name) \
             .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
         templates = session.query(Templates).order_by(Templates.template_id).all()
+        return render_template('snippets/topics.html', templates=templates, topics=topics)
+
+
+@app.route('/templates', methods=['GET'])
+def templates():
+    if request.method == 'GET':
+        templates = session.query(Templates).order_by(Templates.template_id).all()
+        return render_template('snippets/templates.html', templates=templates)
+
+
+@app.route('/skips', methods=['GET'])
+def skips():
+    if request.method == 'GET':
         topics_to_skip = session.query(
             TopicsToSkip.id,
             TopicsToSkip.skip,
@@ -46,7 +71,15 @@ def index():
             Topics.topic_name) \
             .filter(TopicsToSkip.environment_id == Environments.id, TopicsToSkip.topic_id == Topics.topic_id) \
             .order_by(Environments.id).all()
-        return render_template('index.html', env=env, topics=topics, templates=templates, skip=topics_to_skip)
+        env = session.query(Environments).order_by(Environments.id).all()
+        topics = session.query(
+            Topics.topic_id,
+            Topics.topic_name,
+            Topics.zulip_to,
+            Topics.zulip_subject,
+            Templates.template_name) \
+            .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
+        return render_template('snippets/topics_skip.html', skip=topics_to_skip, env=env, topics=topics)
 
 
 @app.route('/env/add', methods=['POST'])
@@ -57,7 +90,7 @@ def env_add():
         try:
             session.add(new_environment)
             session.commit()
-            return redirect('/')
+            return redirect('/environments')
         except Exception as Ex:
             return "There was a problem adding new record."
     else:
@@ -103,7 +136,7 @@ def topic_add():
         try:
             session.add(new_topic)
             session.commit()
-            return redirect('/')
+            return redirect('/topics')
         except Exception as Ex:
             return "There was a problem adding new record."
     else:
@@ -155,7 +188,7 @@ def template_add():
         try:
             session.add(new_topic)
             session.commit()
-            return redirect('/')
+            return redirect('/templates')
         except Exception as Ex:
             return "There was a problem adding new record."
     else:
@@ -202,7 +235,7 @@ def skip_add():
         try:
             session.add(new_skip)
             session.commit()
-            return redirect('/')
+            return redirect('/skips')
         except Exception as Ex:
             return "There was a problem adding new record."
     else:
