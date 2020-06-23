@@ -3,11 +3,6 @@
   hosts: worker_host
   become: yes
   tasks:
-    - name: Update and upgrade apt packages
-      apt:
-        upgrade: yes
-        update_cache: yes
-
     - name: Create directory for virtual environment
       file:
         path: "{{ virtualenv_path }}"
@@ -15,7 +10,7 @@
         mode: "0755"
 
     - name: Install required packages
-      apt:
+      dnf:
         name:
           - python3-setuptools
           - python3-pip
