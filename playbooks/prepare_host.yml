@@ -3,31 +3,15 @@
   hosts: worker_host
   become: yes
   tasks:
-    - name: Create directory for virtual environment
-      file:
-        path: "{{ virtualenv_path }}"
-        state: directory
-        mode: "0755"
 
     - name: Install required packages
-      dnf:
-        name:
+      package:
+        state: present
+        name: "{{ item }}"
+      with_items:
           - python3-setuptools
           - python3-pip
-          - build-essential
-          - python3-dev
-          - python3-venv
-
-    - name: Create venv
-      pip:
-        name: pip
-        virtualenv: "{{ virtualenv_path }}"
-        virtualenv_command: '/usr/bin/python3 -m venv'
-
-    - name: Install poetry into venv
-      pip:
-        name: poetry
-        virtualenv: "{{ virtualenv_path }}"
+          - python3-devel
 
     - name: Checkout from git
       git:
@@ -36,13 +20,19 @@
         force: yes
         depth: 1
 
-    - name: install Python requirements with Poetry
-      shell: "{{ virtualenv_path }}/bin/python poetry install"
-      args:
-        chdir: "{{ base_path }}"
+    - name: Create venv
+      pip:
+        name: pip
+        virtualenv: "{{ virtualenv_path }}"
+        virtualenv_command: '/usr/bin/python3 -m venv'
+
+    - name: install Python requirements
+      pip:
+        requirements: "{{ base_path }}/playbooks/files/requirements.txt"
+        virtualenv: "{{ virtualenv_path }}"
 
     - name: Start server
-      shell: "start-stop-daemon -Sbmvp /tmp/server.pid -x {{ virtualenv_path }}/bin/python {{ base_path }}/server.py --dbstring {{ dbstring }} --port {{ web_server_port }}" # noqa 301 305
+      shell: "nohup {{ virtualenv_path }}/bin/python {{ base_path }}/server.py --dbstring {{ dbstring }} --port {{ web_server_port }}" # noqa 301 305
 
 - name: Install and setup nginx
   hosts: worker_host
