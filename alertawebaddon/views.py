@@ -1,80 +1,31 @@
 import json
 
-import ldap
-from flask import jsonify, Blueprint, g, url_for, flash
+from flask import jsonify, url_for, flash
 from flask import render_template, request, redirect
-from flask_login import current_user, login_required, logout_user, login_user
+from flask_dance.contrib.github import make_github_blueprint, github
 
-from alertawebaddon import app, login_manager, db
-from alertawebaddon.forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateForm, SkipUpdateForm, LoginForm
-from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, get_last_id, User
+from alertawebaddon import app, db
+from alertawebaddon.forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateForm, SkipUpdateForm
+from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, get_last_id
 
-auth = Blueprint('auth', __name__)
-
-
-@login_manager.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+github_bp = make_github_blueprint()
 
 
-@auth.before_request
-def get_current_user():
-    g.user = current_user
-
-
-@auth.route('/', methods=['GET'])
-@auth.route('/home')
+@app.route('/', methods=['GET'])
 def index():
     if request.method == 'GET':
+        if not github.authorized:
+            return redirect(url_for("github.login"))
+        resp = github.get("/user")
+        assert resp.ok
         return render_template('index.html')
-
-
-@auth.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated():
-        flash('You are already logged in.')
-        return redirect(url_for('auth.home'))
-
-    form = LoginForm(request.form)
-
-    if request.method == 'POST' and form.validate():
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        try:
-            User.try_login(username, password)
-        except ldap.INVALID_CREDENTIALS:
-            flash(
-                'Invalid username or password. Please try again.',
-                'danger')
-            return render_template('login.html', form=form)
-
-        user = User.query.filter_by(username=username).first()
-
-        if not user:
-            user = User(username, password)
-            db.session.add(user)
-            db.session.commit()
-        login_user(user)
-        flash('You have successfully logged in.', 'success')
-        return redirect(url_for('auth.home'))
-
-    if form.errors:
-        flash(form.errors, 'danger')
-
-    return render_template('login.html', form=form)
-
-
-@auth.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('auth.home'))
 
 
 @app.route('/environments', methods=['GET'])
 def environments():
     if request.method == 'GET':
+        if not github.authorized:
+            return redirect(url_for("github.login"))
         env = db.session.query(Environments).order_by(Environments.id).all()
         return render_template('snippets/environments.html', env=env)
 
@@ -133,7 +84,8 @@ def env_add():
         except Exception as Ex:
             return "There was a problem adding new record."
     else:
-        return "Empty environment name."
+        flash('Empty environment name.')
+        return redirect(url_for('environments'))
 
 
 @app.route('/env/delete/<int:id>', methods=['GET', 'POST'])
@@ -177,9 +129,10 @@ def topic_add():
             db.session.commit()
             return redirect('/topics')
         except Exception as Ex:
-            return "There was a problem adding new record."
+            return 'There was a problem adding new record.'
     else:
-        return "Empty topic name."
+        flash('Fields should not be empty!')
+        return redirect(url_for('topics'))
 
 
 @app.route('/topic/delete/<int:id>', methods=['GET', 'POST'])
@@ -189,7 +142,7 @@ def topic_delete(id):
         db.session.delete(topic)
         db.session.commit()
         return jsonify(status='ok')
-    return render_template('/snippets/topic_delete.html', title="Deleting Topic Permanently", topic=topic)
+    return render_template('/snippets/topic_delete.html', title='Deleting Topic Permanently', topic=topic)
 
 
 @app.route('/topic/update/<int:id>', methods=['GET', 'POST'])
@@ -215,7 +168,7 @@ def topic_update(id):
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
-    return render_template('/snippets/topic_update.html', title="Edit Topic", form=form)
+    return render_template('/snippets/topic_update.html', title='Edit Topic', form=form)
 
 
 @app.route('/template/add', methods=['POST'])
@@ -229,9 +182,10 @@ def template_add():
             db.session.commit()
             return redirect('/templates')
         except Exception as Ex:
-            return "There was a problem adding new record."
+            return 'There was a problem adding new record.'
     else:
-        return "Empty template name."
+        flash('Fields should not be empty!')
+        return redirect(url_for('templates'))
 
 
 @app.route('/template/delete/<int:id>', methods=['GET', 'POST'])
@@ -241,7 +195,7 @@ def template_delete(id):
         db.session.delete(template)
         db.session.commit()
         return jsonify(status='ok')
-    return render_template('/snippets/template_delete.html', title="Deleting Template Permanently", template=template)
+    return render_template('/snippets/template_delete.html', title='Deleting Template Permanently', template=template)
 
 
 @app.route('/template/update/<int:id>', methods=['GET', 'POST'])
@@ -259,7 +213,7 @@ def template_update(id):
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
-    return render_template('/snippets/template_update.html', title="Edit Template", form=form)
+    return render_template('/snippets/template_update.html', title='Edit Template', form=form)
 
 
 @app.route('/skip/add', methods=['POST'])
@@ -276,9 +230,10 @@ def skip_add():
             db.session.commit()
             return redirect('/skips')
         except Exception as Ex:
-            return "There was a problem adding new record."
+            return 'There was a problem adding new record.'
     else:
-        return "Empty values."
+        flash('Fields should not be empty!')
+        return redirect(url_for('skips'))
 
 
 @app.route('/skip/delete/<int:id>', methods=['GET', 'POST'])
@@ -290,7 +245,7 @@ def skip_delete(id):
         db.session.delete(skip)
         db.session.commit()
         return jsonify(status='ok')
-    return render_template('/snippets/skip_delete.html', title="Deleting Blackout Status for Topic Permanently",
+    return render_template('/snippets/skip_delete.html', title='Deleting Blackout Status for Topic Permanently',
                            skip=skip, topic=topic, env=env)
 
 
@@ -317,4 +272,4 @@ def skip_update(id):
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
-    return render_template('/snippets/skip_update.html', title="Edit Blackout Status for Topic", form=form)
+    return render_template('/snippets/skip_update.html', title='Edit Blackout Status for Topic', form=form)

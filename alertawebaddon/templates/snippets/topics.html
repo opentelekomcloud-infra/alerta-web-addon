@@ -40,11 +40,13 @@
       </div>
 
         <form action="/topic/add" method="POST">
-          <div class="form-group">
-            <label for="newTopicName">New Record:</label>
-            <input type="text" class="form-control" name="newTopicName" id="newTopicName" placeholder="Enter Topic Name">
-            <input type="text" class="form-control" name="newTopicZulipTo" id="newTopicZulipTo" placeholder="Enter Zulip To">
-            <input type="text" class="form-control" name="newTopicZulipSubject" id="newTopicZulipSubject" placeholder="Enter Zulip Subject">
+          <div class="form-group required">
+            <label class="col-md-2 control-label">New Topic Name: </label>
+            <input type="text" class="form-control" required="required" name="newTopicName" id="newTopicName" placeholder="Enter Topic Name">
+            <label class="col-md-2 control-label">Zulip To: </label>
+            <input type="text" class="form-control" required="required" name="newTopicZulipTo" id="newTopicZulipTo" placeholder="Enter Zulip To">
+            <label class="col-md-2 control-label">Zulip Subject: </label>
+            <input type="text" class="form-control" required="required" name="newTopicZulipSubject" id="newTopicZulipSubject" placeholder="Enter Zulip Subject">
             <label for="topicFormControlSelect2">Select template</label>
             <select class="form-control" id="topicFormControlSelect2" name="newTopicTemplate">
               {% for item in templates %}

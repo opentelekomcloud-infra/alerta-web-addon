@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, BooleanField, PasswordField
-from wtforms.validators import DataRequired, InputRequired
+from wtforms import StringField, SelectField, BooleanField
+from wtforms.validators import DataRequired
 from wtforms.widgets import TextArea
 
 
@@ -24,8 +24,3 @@ class SkipUpdateForm(FlaskForm):
     fskip = BooleanField('Skip status:')
     ftopic_name = SelectField('Topic name:', validate_choice=False)
     fenvironment_name = SelectField('Environment name:', validate_choice=False)
-
-
-class LoginForm(FlaskForm):
-    username = StringField('Username', [InputRequired()])
-    password = PasswordField('Password', [InputRequired()])

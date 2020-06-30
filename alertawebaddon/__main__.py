@@ -1,9 +1,12 @@
 from threading import Thread
 
 from alertawebaddon import app, args
-from alertawebaddon.views import auth
+from alertawebaddon.views import github_bp
 
-app.register_blueprint(auth)
+app.register_blueprint(github_bp, url_prefix="/login")
+from flask_bootstrap import Bootstrap
+
+Bootstrap(app)
 
 
 def main():

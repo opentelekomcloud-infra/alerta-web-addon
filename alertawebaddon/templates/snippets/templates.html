@@ -34,16 +34,22 @@
         </table>
         {% endif %}
       </div>
-
-        <form action="/template/add" method="POST">
-          <div class="form-group">
-            <label for="newTemplateName">New Record:</label>
-            <input type="text" class="form-control" name="newTemplateName" id="newTemplateName" placeholder="Enter Template Name">
-            <label for="newTemplateTextarea">Template Data</label>
-            <textarea class="form-control" id="newTemplateTextarea" name="newTemplateData" rows="3" placeholder="Enter Template Data"></textarea>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <div class="alert alert-danger">
+              {{ messages[0] }}
           </div>
-          <button type="submit" class="btn btn-secondary">Add</button>
-        </form>
+      {% endif %}
+      {% endwith %}
+      <form action="/template/add" method="POST">
+        <div class="form-group required">
+          <label class="col-md-2 control-label">Template Name: </label>
+          <input type="text" class="form-control" required="required" name="newTemplateName" id="newTemplateName" placeholder="Enter Template Name">
+          <label class="col-md-2 control-label">Template Data: </label>
+          <textarea class="form-control" id="newTemplateTextarea"  required="required" name="newTemplateData" rows="3" placeholder="Enter Template Data"></textarea>
+        </div>
+        <button type="submit" class="btn btn-secondary">Add</button>
+      </form>
     </div>
 </div>
 {% endblock content %}

@@ -99,3 +99,12 @@ a.logo-link:focus {
   padding-right: 15px;
   padding-left: 15px;
 }
+.form-group.required .control-label:after {
+    color: #d00;
+    position: absolute;
+    font-family: 'Glyphicons Halflings';
+    font-weight: normal;
+    font-size: 14px;
+    content: "*";
+    margin-left: 7px;
+}

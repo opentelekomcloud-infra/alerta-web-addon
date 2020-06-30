@@ -1,7 +1,7 @@
+import os
 from argparse import ArgumentParser
 
 from flask import Flask
-from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
@@ -15,11 +15,9 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = args.dbstring
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
-app.config['LDAP_PROVIDER_URL'] = 'ldap://ldap.testathon.net:389/'
-app.config['LDAP_PROTOCOL_VERSION'] = 3
+app.config['GITHUB_OAUTH_CLIENT_ID'] = os.environ.get("GITHUB_OAUTH_CLIENT_ID")
+app.config['GITHUB_OAUTH_CLIENT_SECRET'] = os.environ.get("GITHUB_OAUTH_CLIENT_SECRET")
+app.secret_key = os.environ.get("APP_SECRET_KEY")
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
 db = SQLAlchemy(app)
 db.create_all()

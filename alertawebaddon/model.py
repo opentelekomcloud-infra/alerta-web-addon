@@ -1,9 +1,7 @@
-import ldap
-from flask_login._compat import unicode
 from sqlalchemy import ForeignKey, Column, Integer, String, Boolean, inspect
 from sqlalchemy.orm import relationship
 
-from alertawebaddon import app, db
+from alertawebaddon import db
 
 
 class Environments(db.Model):
@@ -74,39 +72,6 @@ class TopicsToSkip(db.Model):
 
     def __repr__(self):
         return f"<Skip {self.id, self.skip, self.environment_id, self.topic_id}>"
-
-
-class User(db.Model):
-    id = Column(Integer, primary_key=True)
-    username = Column(String(100))
-
-    def __init__(self, username, password):
-        self.username = username
-
-    @staticmethod
-    def try_login(username, password):
-        conn = get_ldap_connection()
-        conn.simple_bind_s(
-            'cn=%s,ou=Users,dc=testathon,dc=net' % username,
-            password
-        )
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return unicode(self.id)
-
-
-def get_ldap_connection():
-    conn = ldap.initialize(app.config['LDAP_PROVIDER_URL'])
-    return conn
 
 
 def get_pk_name(table):
