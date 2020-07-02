@@ -20,4 +20,3 @@ app.config['GITHUB_OAUTH_CLIENT_SECRET'] = os.environ.get("GITHUB_OAUTH_CLIENT_S
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 
 db = SQLAlchemy(app)
-db.create_all()

@@ -8,7 +8,6 @@ from flask_bootstrap import Bootstrap
 
 Bootstrap(app)
 
-
 def main():
     Thread(target=app.run, kwargs={'port': args.port, 'debug': args.debug}).start()
 
