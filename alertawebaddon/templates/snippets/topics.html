@@ -9,10 +9,16 @@
       {% if topics|length < 1 %}
       <p>There is nothing to show.</p>
       {% else %}
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="fasearch"><i class="fa fa-search"></i></span>
+        </div>
+        <input type="text" class="form-control" id="searchInput" placeholder="Search for .." aria-describedby="fasearch">
+      </div>
       <div>
-        <table class="table table-dark table-hover">
+        <table id="dataTable" class="table table-dark table-hover">
           <thead>
-            <tr>
+            <tr class="dataHead">
               <th>Topic ID</th>
               <th>Topic Name</th>
               <th>Zulip To</th>

@@ -76,6 +76,20 @@
     });
   });
   </script>
+  <script>
+    $('#searchInput').on('keyup',function() {
+    var value = $(this).val();
+    var patt =new RegExp(value,"i");
+    $('#dataTable').find('tr').each(function() {
+      if (!($(this).find('td').text().search(patt) >= 0)) {
+        $(this).not('.dataHead').hide();
+      }
+      if (($(this).find('td').text().search(patt) >= 0)) {
+        $(this).show();
+      }
+    });
+  });
+  </script>
 </body>
 
 </html>
