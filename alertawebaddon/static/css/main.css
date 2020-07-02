@@ -108,3 +108,6 @@ a.logo-link:focus {
     content: "*";
     margin-left: 7px;
 }
+.text-primary {
+    color: #ffffff!important;
+}

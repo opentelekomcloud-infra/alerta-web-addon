@@ -11,9 +11,6 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 db.create_all()
 github_bp = make_github_blueprint()
 
-contents404 = "<html><body><h1>Status: Error 404 Page Not Found</h1></body></html>"
-contents403 = "<html><body><h1>Status: Error 403 Access Denied</h1></body></html>"
-
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -60,8 +57,8 @@ def catch_all(path):
                     .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
                 return render_template('snippets/topics_skip.html', skip=topics_to_skip, env=env, topics=topics)
             else:
-                return contents404
-    return contents403
+                return render_template('404page.html')
+    return render_template('403page.html')
 
 
 @app.route('/env/add', methods=['POST'])
