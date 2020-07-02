@@ -152,11 +152,10 @@ def topic_update(id):
         form.ftopic_name.data = topic.topic_name
         form.fzulip_to.data = topic.zulip_to
         form.fzulip_subject.data = topic.zulip_subject
-        form.ftemplate.choices = [(template.template_id, template.template_name) for template in
-                                  db.session.query(Templates.template_id, Templates.template_name).
-                                      order_by(Templates.template_id).all()]
-        form.ftemplate.choices.insert(0, form.ftemplate.choices.pop(
-            [x for x, y in enumerate(form.ftemplate.choices) if y[0] == topic.templ_id][0]))
+        templates = [(template.template_id, template.template_name) for template in
+                     db.session.query(Templates.template_id, Templates.template_name).
+                         order_by(Templates.template_id).all()]
+        form.ftemplate.choices = sort_choices(templates, topic.templ_id)
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
@@ -253,15 +252,19 @@ def skip_update(id):
         return jsonify(status='ok')
     elif request.method == 'GET':
         form.fskip.data = skip.skip
-        form.fenvironment_name.choices = [(env.id, env.name) for env in db.session.query(Environments)
-            .order_by(Environments.id).all()]
-        form.fenvironment_name.choices.insert(0, form.fenvironment_name.choices.pop(
-            [x for x, y in enumerate(form.fenvironment_name.choices) if y[0] == skip.environment_id][0]))
-        form.ftopic_name.choices = [(topic.topic_id, topic.topic_name) for topic in db.session.query(Topics)
-            .order_by(Topics.topic_id).all()]
-        form.ftopic_name.choices.insert(0, form.ftopic_name.choices.pop(
-            [x for x, y in enumerate(form.ftopic_name.choices) if y[0] == skip.topic_id][0]))
+
+        envs = [(env.id, env.name) for env in db.session.query(Environments).order_by(Environments.id).all()]
+        form.fenvironment_name.choices = sort_choices(envs, skip.environment_id)
+
+        topics = [(topic.topic_id, topic.topic_name) for topic in
+                  db.session.query(Topics).order_by(Topics.topic_id).all()]
+        form.ftopic_name.choices = sort_choices(topics, skip.topic_id)
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
     return render_template('/snippets/skip_update.html', title='Edit Blackout Status for Topic', form=form)
+
+
+def sort_choices(data: list, filter):
+    data.insert(0, data.pop([x for x, y in enumerate(data) if y[0] == filter][0]))
+    return data
