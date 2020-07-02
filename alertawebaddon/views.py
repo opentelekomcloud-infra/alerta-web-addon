@@ -15,15 +15,7 @@ contents404 = "<html><body><h1>Status: Error 404 Page Not Found</h1></body></htm
 contents403 = "<html><body><h1>Status: Error 403 Access Denied</h1></body></html>"
 
 
-@app.route('/')
-def index():
-    if not github.authorized:
-        return redirect(url_for("github.login"))
-    resp = github.get("/user")
-    assert resp.ok
-    return render_template('index.html')
-
-
+@app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
     if not github.authorized:
@@ -32,15 +24,15 @@ def catch_all(path):
     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
     for org in orgs:
         if 'opentelekomcloud' in org['login']:
-            if (path == ''):
+            if path == '':
                 return render_template('index.html')
-            elif (path == 'environments'):
+            elif path == 'environments':
                 env = db.session.query(Environments).order_by(Environments.id).all()
                 return render_template('snippets/environments.html', env=env)
-            elif (path == 'templates'):
+            elif path == 'templates':
                 templates = db.session.query(Templates).order_by(Templates.template_id).all()
                 return render_template('snippets/templates.html', templates=templates)
-            elif (path == 'topics'):
+            elif path == 'topics':
                 topics = db.session.query(
                     Topics.topic_id,
                     Topics.topic_name,
@@ -50,7 +42,7 @@ def catch_all(path):
                     .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
                 templates = db.session.query(Templates).order_by(Templates.template_id).all()
                 return render_template('snippets/topics.html', templates=templates, topics=topics)
-            elif (path == 'skips'):
+            elif path == 'skips':
                 topics_to_skip = db.session.query(
                     TopicsToSkip.id,
                     TopicsToSkip.skip,
