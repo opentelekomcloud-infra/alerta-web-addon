@@ -1,4 +1,4 @@
-base_path: /home/linux/server/alertawebaddon
+base_path: /home/linux/server/alerta-web-addon
 virtualenv_path: "{{ base_path }}/venv"
 worker_address: 80.158.32.78
 worker_key: /tmp/rancher

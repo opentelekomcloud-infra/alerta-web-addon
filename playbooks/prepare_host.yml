@@ -7,6 +7,7 @@
     GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
     APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
     DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
+    OAUTHLIB_INSECURE_TRANSPORT: true
   tasks:
 
     - name: Install required packages
@@ -24,6 +25,7 @@
         dest: "{{ base_path }}"
         force: yes
         depth: 1
+        version: oauth
 
     - name: Create venv
       pip:
