@@ -38,8 +38,10 @@
         requirements: "{{ base_path }}/playbooks/files/requirements.txt"
         virtualenv: "{{ virtualenv_path }}"
 
-    - name: Start server
-      shell: "nohup {{ virtualenv_path }}/bin/python {{ base_path }} -m alertawebaddon --port {{ web_server_port }} &" # noqa 301 305
+    - name: Start server  # noqa 301 305
+      shell: "nohup {{ virtualenv_path }}/bin/python -m alertawebaddon --port {{ web_server_port }} &"
+      args:
+        chdir: "{{ base_path }}"
 
 - name: Install and setup nginx
   hosts: worker_host
