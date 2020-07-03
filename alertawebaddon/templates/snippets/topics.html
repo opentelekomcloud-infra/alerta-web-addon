@@ -44,24 +44,23 @@
         </table>
         {% endif %}
       </div>
-
-        <form action="/topic/add" method="POST">
-          <div class="form-group required">
-            <label class="col-md-2 control-label">Add Record: <br>New Topic Name: </label>
-            <input type="text" class="form-control" required="required" name="newTopicName" id="newTopicName" placeholder="Enter Topic Name">
-            <label class="col-md-2 control-label">Zulip To for New Topic: </label>
-            <input type="text" class="form-control" required="required" name="newTopicZulipTo" id="newTopicZulipTo" placeholder="Enter Zulip To">
-            <label class="col-md-2 control-label">Zulip Subject for New Topic: </label>
-            <input type="text" class="form-control" required="required" name="newTopicZulipSubject" id="newTopicZulipSubject" placeholder="Enter Zulip Subject">
-            <label for="topicFormControlSelect2">Select template for New Topic</label>
-            <select class="form-control" id="topicFormControlSelect2" name="newTopicTemplate">
-              {% for item in templates %}
-                  <option value="{{ item.template_name }}" SELECTED>{{ item.template_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn btn-secondary">Add</button>
-        </form>
+      <form action="/topic/add" method="POST">
+        <div class="form-group required">
+          <label class="control-label">Add Record: <br>New Topic Name: </label>
+          <input type="text" class="form-control" required="required" name="newTopicName" id="newTopicName" placeholder="Enter Topic Name">
+          <label class="control-label">Zulip To for New Topic: </label>
+          <input type="text" class="form-control" required="required" name="newTopicZulipTo" id="newTopicZulipTo" placeholder="Enter Zulip To">
+          <label class="control-label">Zulip Subject for New Topic: </label>
+          <input type="text" class="form-control" required="required" name="newTopicZulipSubject" id="newTopicZulipSubject" placeholder="Enter Zulip Subject">
+          <label for="topicFormControlSelect2">Select template for New Topic</label>
+          <select class="form-control" id="topicFormControlSelect2" name="newTopicTemplate">
+            {% for item in templates %}
+                <option value="{{ item.template_name }}" SELECTED>{{ item.template_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-secondary">Add</button>
+      </form>
     </div>
   </div>
 {% endblock content %}

@@ -41,31 +41,30 @@
         </table>
         {% endif %}
       </div>
+      <form action="/skip/add" method="POST">
+        <div class="form-group">
+          <label for="skipFormControlSelect2">Add Record: <br>Skip?</label>
+          <select class="form-control" id="skipFormControlSelect2" name="newSkip">
+            <option selected value="0">False</option>
+            <option value="1">True</option>
+          </select>
+          <label for="skipTopFormControlSelect2">Select Topic for New Skip</label>
+          <select class="form-control" id="skipTopFormControlSelect2" name="newSkipTopic">
+            {% for item in topics %}
+                <option value="{{ item.topic_name }}" SELECTED>{{ item.topic_name }}</option>
+            {% endfor %}
+          </select>
 
-        <form action="/skip/add" method="POST">
-          <div class="form-group">
-            <label for="skipFormControlSelect2">Add Record: <br>Skip?</label>
-            <select class="form-control" id="skipFormControlSelect2" name="newSkip">
-              <option selected value="0">False</option>
-              <option value="1">True</option>
-            </select>
-            <label for="skipTopFormControlSelect2">Select Topic for New Skip</label>
-            <select class="form-control" id="skipTopFormControlSelect2" name="newSkipTopic">
-              {% for item in topics %}
-                  <option value="{{ item.topic_name }}" SELECTED>{{ item.topic_name }}</option>
-              {% endfor %}
-            </select>
+          <label for="skipEnvFormControlSelect2">Select Environment for New Skip</label>
+          <select class="form-control" id="skipEnvFormControlSelect2" name="newSkipEnv">
+            {% for item in env %}
+                <option value="{{ item.name }}" SELECTED>{{ item.name }}</option>
+            {% endfor %}
+          </select>
 
-            <label for="skipEnvFormControlSelect2">Select Environment for New Skip</label>
-            <select class="form-control" id="skipEnvFormControlSelect2" name="newSkipEnv">
-              {% for item in env %}
-                  <option value="{{ item.name }}" SELECTED>{{ item.name }}</option>
-              {% endfor %}
-            </select>
-
-          </div>
-          <button type="submit" class="btn btn-secondary">Add</button>
-        </form>
+        </div>
+        <button type="submit" class="btn btn-secondary">Add</button>
+      </form>
     </div>
 </div>
 {% endblock content %}
