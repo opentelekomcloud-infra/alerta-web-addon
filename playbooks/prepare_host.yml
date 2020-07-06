@@ -2,6 +2,12 @@
 - name: Install and run server
   hosts: worker_host
   become: yes
+  environment:
+    GITHUB_OAUTH_CLIENT_SECRET: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_SECRET') }}"
+    GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
+    APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
+    DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
+    OAUTHLIB_INSECURE_TRANSPORT: true
   tasks:
 
     - name: Install required packages
@@ -19,6 +25,7 @@
         dest: "{{ base_path }}"
         force: yes
         depth: 1
+        version: oauth
 
     - name: Create venv
       pip:
@@ -31,8 +38,10 @@
         requirements: "{{ base_path }}/playbooks/files/requirements.txt"
         virtualenv: "{{ virtualenv_path }}"
 
-    - name: Start server
-      shell: "nohup {{ virtualenv_path }}/bin/python {{ base_path }}/server.py --dbstring {{ dbstring }} --port {{ web_server_port }} &" # noqa 301 305
+    - name: Start server  # noqa 301 305
+      shell: "nohup {{ virtualenv_path }}/bin/python -m alertawebaddon --port {{ web_server_port }} &"
+      args:
+        chdir: "{{ base_path }}"
 
 - name: Install and setup nginx
   hosts: worker_host

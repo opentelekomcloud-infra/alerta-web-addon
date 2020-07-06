@@ -1,6 +1,5 @@
 base_path: /home/linux/server/alerta-web-addon
 virtualenv_path: "{{ base_path }}/venv"
-dbstring: "{{ lookup('env', 'DATABASE_URL') }}"
 worker_address:
 worker_key:
 web_server_port: 23456

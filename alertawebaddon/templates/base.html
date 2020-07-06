@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Sonsie+One&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
@@ -72,6 +73,20 @@
     // Sidebar toggle behavior
     $('#sidebarCollapse').on('click', function() {
         $('#sidebar, #content').toggleClass('active');
+    });
+  });
+  </script>
+  <script>
+    $('#searchInput').on('keyup',function() {
+    var value = $(this).val();
+    var patt =new RegExp(value,"i");
+    $('#dataTable').find('tr').each(function() {
+      if (!($(this).find('td').text().search(patt) >= 0)) {
+        $(this).not('.dataHead').hide();
+      }
+      if (($(this).find('td').text().search(patt) >= 0)) {
+        $(this).show();
+      }
     });
   });
   </script>

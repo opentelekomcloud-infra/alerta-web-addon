@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% include 'snippets/sidebar.html' %}
+<div class="page-content p-1" id="content">
+  <div class="v-card__title title">Alerta Topics</div>
+
+    <div class="card card-body modal-content">
+      {% if topics|length < 1 %}
+      <p>There is nothing to show.</p>
+      {% else %}
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="fasearch"><i class="fa fa-search"></i></span>
+        </div>
+        <input type="text" class="form-control" id="searchInput" placeholder="Search for .." aria-describedby="fasearch">
+      </div>
+      <div>
+        <table id="dataTable" class="table table-dark table-hover">
+          <thead>
+            <tr class="dataHead">
+              <th>Topic ID</th>
+              <th>Topic Name</th>
+              <th>Zulip To</th>
+              <th>Zulip Subject</th>
+              <th>Template</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in topics %}
+            <tr>
+              <td id="topic_id">{{ item.topic_id }}</td>
+              <td class="text-left" id="topic_name">{{ item.topic_name }}</td>
+              <td class="text-left" id="zulip_to">{{ item.zulip_to }}</td>
+              <td class="text-left" id="zulip_subject">{{ item.zulip_subject }}</td>
+              <td class="text-left" id="topic_template">{{ item.template_name }}</td>
+              <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('topic_update', id=item.topic_id) }}" role="button" href="#">Update</a></td>
+              <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('topic_delete', id=item.topic_id) }}" role="button" href="#">Delete</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+      <form action="/topic/add" method="POST">
+        <div class="form-group required">
+          <label class="control-label">Add Record: <br>New Topic Name: </label>
+          <input type="text" class="form-control" required="required" name="newTopicName" id="newTopicName" placeholder="Enter Topic Name">
+          <label class="control-label">Zulip To for New Topic: </label>
+          <input type="text" class="form-control" required="required" name="newTopicZulipTo" id="newTopicZulipTo" placeholder="Enter Zulip To">
+          <label class="control-label">Zulip Subject for New Topic: </label>
+          <input type="text" class="form-control" required="required" name="newTopicZulipSubject" id="newTopicZulipSubject" placeholder="Enter Zulip Subject">
+          <label for="topicFormControlSelect2">Select template for New Topic</label>
+          <select class="form-control" id="topicFormControlSelect2" name="newTopicTemplate">
+            {% for item in templates %}
+                <option value="{{ item.template_name }}" SELECTED>{{ item.template_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-secondary">Add</button>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

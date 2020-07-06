@@ -2,17 +2,24 @@
 Web service with UI for control new alerta zulip plugin, based on Flask and Flask-Bootstrap
 
 #### RUN
-`python server.py --dbstring ... --port ...`
+before run:
+- export GITHUB_OAUTH_CLIENT_SECRET=some_secret
+- export GITHUB_OAUTH_CLIENT_ID=some_id
+- export APP_SECRET_KEY=anyone
+- export DATABASE_URL=postgresql://...
+- export OAUTHLIB_INSECURE_TRANSPORT=true (if not https)
+
+`python server.py --port ...`
 
 or by playbook: 
  
-`ansible-playbook -i inventory/prod prepare_host.yml`
+`ansible-playbook -i inventory/prod playbooks/prepare_host.yml`
   
- next variable should be set:
+ next ansible variables should be set:
 - worker_address
 - worker_key
-- export DATABASE_URL
+- skip_nginx (false by default)
+
 ##### server args:
 - `--port` by default = 23456
-- `--dbstring` postgresql://...
 - `--debug` by default=False

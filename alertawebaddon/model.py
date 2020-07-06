@@ -1,11 +1,10 @@
 from sqlalchemy import ForeignKey, Column, Integer, String, Boolean, inspect
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+from alertawebaddon import db
 
 
-class Environments(Base):
+class Environments(db.Model):
     __tablename__ = 'alerta_environments'
     id = Column(Integer, primary_key=True)
     name = Column(String())
@@ -20,7 +19,7 @@ class Environments(Base):
         return f"<Environment {self.id, self.name}>"
 
 
-class Templates(Base):
+class Templates(db.Model):
     __tablename__ = 'templates'
     template_id = Column(Integer, primary_key=True, autoincrement=True)
     template_name = Column(String())
@@ -37,9 +36,8 @@ class Templates(Base):
         return f"<Template {self.template_id, self.template_name, self.template_data}>"
 
 
-class Topics(Base):
+class Topics(db.Model):
     __tablename__ = 'topics'
-
     topic_id = Column(Integer, primary_key=True, autoincrement=True)
     topic_name = Column(String())
     zulip_to = Column(String())
@@ -59,9 +57,8 @@ class Topics(Base):
         return f"<Topic {self.topic_id, self.topic_name, self.zulip_to, self.zulip_subject, self.templ_id}>"
 
 
-class TopicsToSkip(Base):
+class TopicsToSkip(db.Model):
     __tablename__ = 'skip_topics'
-
     id = Column(Integer, primary_key=True, autoincrement=True)
     skip = Column(Boolean())
     environment_id = Column(Integer(), ForeignKey('alerta_environments.id'))
