@@ -8,6 +8,7 @@ before run:
 - export APP_SECRET_KEY=anyone
 - export DATABASE_URL=postgresql://...
 - export OAUTHLIB_INSECURE_TRANSPORT=true (if not https)
+- export GF_AUTH_GITHUB_ALLOWED_ORGANIZATIONS=some_org
 
 `python server.py --port ...`
 
