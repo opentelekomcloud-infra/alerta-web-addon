@@ -9,8 +9,6 @@ from alertawebaddon import app, db
 from alertawebaddon.forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateForm, SkipUpdateForm
 from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, get_last_id
 
-GF_AUTH_GITHUB_ALLOWED_ORGANIZATIONS = \
-    os.environ.get("GF_AUTH_GITHUB_ALLOWED_ORGANIZATIONS", default="opentelekomcloud-infra")
 db.create_all()
 github_bp = make_github_blueprint()
 
@@ -23,7 +21,7 @@ def catch_all(path):
     username = github.get("/user").json()['login']
     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
     for org in orgs:
-        if GF_AUTH_GITHUB_ALLOWED_ORGANIZATIONS in org['login']:
+        if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             if path == '':
                 return render_template('index.html')
             elif path == 'environments':
