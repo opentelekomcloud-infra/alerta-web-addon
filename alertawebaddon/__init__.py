@@ -12,7 +12,6 @@ args, _ = AGP.parse_known_args()
 MANDATORY_ENV_VARS = ["DATABASE_URL",
                       "GITHUB_OAUTH_CLIENT_ID",
                       "GITHUB_OAUTH_CLIENT_SECRET",
-                      "GITHUB_OAUTH_ALLOWED_ORGANIZATIONS",
                       "APP_SECRET_KEY"]
 
 for var in MANDATORY_ENV_VARS:
