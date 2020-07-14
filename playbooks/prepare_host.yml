@@ -11,13 +11,15 @@
   tasks:
 
     - name: Install required packages
-      package:
+      apt:
         state: present
         name: "{{ item }}"
+      upgrade: yes
+      update_cache: yes
       with_items:
           - python3-setuptools
           - python3-pip
-          - python3-devel
+          - python3-dev
 
     - name: Checkout from git
       git:
