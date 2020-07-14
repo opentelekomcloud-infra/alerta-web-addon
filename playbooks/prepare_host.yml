@@ -7,6 +7,7 @@
     GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
     APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
     DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
+    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: "{{ lookup('env', 'GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') }}"
     OAUTHLIB_INSECURE_TRANSPORT: true
   tasks:
     - name: Update and upgrade apt packages
@@ -22,6 +23,7 @@
           - python3-setuptools
           - python3-pip
           - python3-dev
+          - python3-venv
 
     - name: Checkout from git
       git:
@@ -53,7 +55,7 @@
   vars_files:
   - "./vars/nginx_parameters.yml"
   vars:
-    certbot_admin_email: "webaddon@{{ domain }}"
+    certbot_admin_email: "a.sidelnikov@t-systems.com"
     certbot_create_if_missing: true
     certbot_create_standalone_stop_services: []
     certbot_auto_renew_user: linux

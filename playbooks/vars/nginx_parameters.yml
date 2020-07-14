@@ -1,4 +1,4 @@
-domain: 80.158.23.243
+domain: webaddon.sidelnikov.test.domain
 extra_parameters: |
             location / {
                 if ($scheme = http) {
