@@ -25,7 +25,7 @@
         dest: "{{ base_path }}"
         force: yes
         depth: 1
-        version: oauth
+        version: dispatcher_prefix
 
     - name: Create venv
       pip:
@@ -48,12 +48,23 @@
   become: yes
   vars_files:
   - "./vars/nginx_parameters.yml"
+  vars:
+    certbot_admin_email: "webaddon@{{ domain }}"
+    certbot_create_if_missing: true
+    certbot_create_standalone_stop_services: []
+    certbot_auto_renew_user: linux
+    certbot_auto_renew_minute: "20"
+    certbot_auto_renew_hour: "5"
+    certbot_certs:
+      - domains:
+          - "{{ domain }}"
+    nginx_remove_default_vhost: yes
+    nginx_vhosts:
+    - listen: "443 ssl"
+      server_name: "{{ domain }}"
+      extra_parameters: "{{ extra_parameters }}"
   roles:
-  - role: geerlingguy.nginx
-    vars:
-      nginx_remove_default_vhost: yes
-      nginx_vhosts:
-      - listen: "80"
-        server_name: "localhost"
-        extra_parameters: "{{ extra_parameters }}"
-    when: skip_nginx|bool == false
+    - role: geerlingguy.certbot
+      when: skip_nginx|bool == false
+    - role: geerlingguy.nginx
+      when: skip_nginx|bool == false

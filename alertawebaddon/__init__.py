@@ -26,7 +26,6 @@ app.config['GITHUB_OAUTH_CLIENT_SECRET'] = os.environ.get("GITHUB_OAUTH_CLIENT_S
 app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
     os.environ.get("GITHUB_OAUTH_ALLOWED_ORGANIZATIONS", default="opentelekomcloud-infra")
 app.secret_key = os.environ.get("APP_SECRET_KEY")
-app.config['APPLICATION_ROOT'] = '/webaddon'
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 
 db = SQLAlchemy(app)
