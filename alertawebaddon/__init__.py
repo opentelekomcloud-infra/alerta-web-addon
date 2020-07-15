@@ -3,16 +3,9 @@ from argparse import ArgumentParser
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-class ReverseProxied(object):
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        environ['wsgi.url_scheme'] = 'https'
-        return self.app(environ, start_response)
-#
 class PrefixMiddleware(object):
 
     def __init__(self, app, prefix=''):
@@ -45,16 +38,19 @@ for var in MANDATORY_ENV_VARS:
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
-app.config['GITHUB_OAUTH_CLIENT_ID'] = os.environ.get("GITHUB_OAUTH_CLIENT_ID")
-app.config['GITHUB_OAUTH_CLIENT_SECRET'] = os.environ.get("GITHUB_OAUTH_CLIENT_SECRET")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['GITHUB_OAUTH_CLIENT_ID'] = os.environ.get('GITHUB_OAUTH_CLIENT_ID')
+app.config['GITHUB_OAUTH_CLIENT_SECRET'] = os.environ.get('GITHUB_OAUTH_CLIENT_SECRET')
 app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
-    os.environ.get("GITHUB_OAUTH_ALLOWED_ORGANIZATIONS", default="opentelekomcloud-infra")
-app.secret_key = os.environ.get("APP_SECRET_KEY")
+    os.environ.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS', default='opentelekomcloud-infra')
+app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
+app.config['APPLICATION_ROOT'] = '/test'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-# app.wsgi_app = ReverseProxied(app.wsgi_app)
-app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/test')
+# app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/test')
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+        app.config['APPLICATION_ROOT']: app,
+    })
 
 db = SQLAlchemy(app)
