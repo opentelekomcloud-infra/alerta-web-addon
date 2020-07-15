@@ -10,7 +10,7 @@ from alertawebaddon.forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateF
 from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, get_last_id
 
 db.create_all()
-github_bp = make_github_blueprint()
+github_bp = make_github_blueprint(redirect_to="/")
 
 
 @app.route('/', defaults={'path': ''})
