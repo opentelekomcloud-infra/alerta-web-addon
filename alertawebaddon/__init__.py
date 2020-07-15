@@ -13,21 +13,21 @@ class ReverseProxied(object):
         environ['wsgi.url_scheme'] = 'https'
         return self.app(environ, start_response)
 #
-# class PrefixMiddleware(object):
-#
-#     def __init__(self, app, prefix=''):
-#         self.app = app
-#         self.prefix = prefix
-#
-#     def __call__(self, environ, start_response):
-#
-#         if environ['PATH_INFO'].startswith(self.prefix):
-#             environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
-#             environ['SCRIPT_NAME'] = self.prefix
-#             return self.app(environ, start_response)
-#         else:
-#             start_response('404', [('Content-Type', 'text/plain')])
-#             return ["This url does not belong to the app.".encode()]
+class PrefixMiddleware(object):
+
+    def __init__(self, app, prefix=''):
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+
+        if environ['PATH_INFO'].startswith(self.prefix):
+            environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
+            environ['SCRIPT_NAME'] = self.prefix
+            return self.app(environ, start_response)
+        else:
+            start_response('404', [('Content-Type', 'text/plain')])
+            return ["This url does not belong to the app.".encode()]
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
 AGP.add_argument('--port', help='port to be listened', default=23456, type=int)
@@ -55,6 +55,6 @@ app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 # app.wsgi_app = ReverseProxied(app.wsgi_app)
-# app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/webaddon')
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/test')
 
 db = SQLAlchemy(app)
