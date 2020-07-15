@@ -4,6 +4,18 @@ from argparse import ArgumentParser
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
+class ReverseProxied(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        scheme = environ.get('HTTP_X_FORWARDED_PROTO')
+        if scheme:
+            environ['wsgi.url_scheme'] = scheme
+        return self.app(environ, start_response)
+
+
 AGP = ArgumentParser(prog='Web server for alerta', description='')
 AGP.add_argument('--port', help='port to be listened', default=23456, type=int)
 AGP.add_argument('--debug', help='debug mode', default=False, type=bool)
@@ -27,5 +39,7 @@ app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
     os.environ.get("GITHUB_OAUTH_ALLOWED_ORGANIZATIONS", default="opentelekomcloud-infra")
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
+
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 db = SQLAlchemy(app)
