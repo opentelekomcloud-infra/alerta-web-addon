@@ -48,9 +48,6 @@ app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 app.config['APPLICATION_ROOT'] = '/test'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-# app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/test')
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
-        app.config['APPLICATION_ROOT']: app,
-    })
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/webaddon')
 
 db = SQLAlchemy(app)
