@@ -5,6 +5,16 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+
+class ReverseProxied(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        environ['wsgi.url_scheme'] = 'https'
+        return self.app(environ, start_response)
+
+
 AGP = ArgumentParser(prog='Web server for alerta', description='')
 AGP.add_argument('--port', help='port to be listened', default=23456, type=int)
 AGP.add_argument('--debug', help='debug mode', default=False, type=bool)
@@ -31,5 +41,6 @@ app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 app.config['APPLICATION_ROOT'] = '/test'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 db = SQLAlchemy(app)
