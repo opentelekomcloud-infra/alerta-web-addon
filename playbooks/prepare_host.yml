@@ -1,14 +1,37 @@
 ---
+- name: Checking running application
+  hosts: worker_host
+  become: yes
+  tasks:
+    - name: Get reporting processes list from remote host  # noqa 301 305
+      ignore_errors: yes
+      shell: "ps aux | grep 'alertawebaddon' | awk '{print $2}'"
+      register: process_monitor
+    - name: Kill running reporting processes  # noqa 301 305
+      ignore_errors: yes
+      shell: "kill {{ process_monitor.stdout_lines[0] }}"
+    - name: Waiting for status
+      wait_for:
+        path: "/proc/{{ process_monitor.stdout_lines[0] }}/status"
+        state: absent
+      ignore_errors: yes
+
 - name: Install and run server
   hosts: worker_host
   become: yes
   environment:
-    GITHUB_OAUTH_CLIENT_SECRET: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_SECRET') }}"
-    GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
-    APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
-    DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
-    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: "{{ lookup('env', 'GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') }}"
-    OAUTHLIB_INSECURE_TRANSPORT: true
+#    GITHUB_OAUTH_CLIENT_SECRET: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_SECRET') }}"
+#    GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
+#    APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
+#    DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
+#    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: "{{ lookup('env', 'GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') }}"
+#    OAUTHLIB_INSECURE_TRANSPORT: true
+    GITHUB_OAUTH_CLIENT_SECRET: b7630ae9d24f885a4d67820162eafcdbc0d7dab9
+    GITHUB_OAUTH_CLIENT_ID: 6c2f37a2568ab34beb8b
+    APP_SECRET_KEY: anyone
+    DATABASE_URL: postgresql://postgres:qwerty12345!@80.158.41.159/alerta
+    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: opentelekomcloud-infra
+    OAUTHLIB_INSECURE_TRANSPORT: false
   tasks:
     - name: Update and upgrade apt packages
       apt:
@@ -24,6 +47,7 @@
           - python3-pip
           - python3-dev
           - python3-venv
+          - cron
 
     - name: Checkout from git
       git:

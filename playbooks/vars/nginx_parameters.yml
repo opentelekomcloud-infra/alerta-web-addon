@@ -1,4 +1,4 @@
-domain: webaddon.sidelnikov.test.domain
+domain: ecs-80-158-23-243.reverse.open-telekom-cloud.com
 extra_parameters: |
             location / {
                 if ($scheme = http) {
