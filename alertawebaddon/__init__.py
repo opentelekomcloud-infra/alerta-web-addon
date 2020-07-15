@@ -5,13 +5,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-# class ReverseProxied(object):
-#     def __init__(self, app):
-#         self.app = app
-#
-#     def __call__(self, environ, start_response):
-#         environ['wsgi.url_scheme'] = 'https'
-#         return self.app(environ, start_response)
+class ReverseProxied(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        environ['wsgi.url_scheme'] = 'https'
+        return self.app(environ, start_response)
 #
 # class PrefixMiddleware(object):
 #
@@ -53,8 +53,8 @@ app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 
-app.wsgi_app = ProxyFix(app.wsgi_app)
-# app.wsgi_app = ReverseProxied(app.wsgi_app)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_prefix=1)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 # app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/webaddon')
 
 db = SQLAlchemy(app)
