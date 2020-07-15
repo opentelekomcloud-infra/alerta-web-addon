@@ -5,7 +5,7 @@ from flask_bootstrap import Bootstrap
 from alertawebaddon import app, args
 from alertawebaddon.views import github_bp
 
-app.register_blueprint(github_bp, url_prefix="/webaddon/login")
+app.register_blueprint(github_bp, url_prefix="/login")
 
 Bootstrap(app)
 
