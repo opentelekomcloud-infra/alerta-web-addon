@@ -17,7 +17,7 @@ github_bp = make_github_blueprint()
 @app.route('/<path:path>')
 def catch_all(path):
     if not github.authorized:
-        return redirect(url_for("github.login"))
+        return redirect(url_for("github.login", _external=True))
     username = github.get("/user").json()['login']
     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
     for org in orgs:
