@@ -38,7 +38,6 @@ app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
     os.environ.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS', default='opentelekomcloud-infra')
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
-app.config['APPLICATION_ROOT'] = '/test'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
