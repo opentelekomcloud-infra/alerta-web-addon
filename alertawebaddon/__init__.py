@@ -53,7 +53,7 @@ app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 
-app.wsgi_app = ProxyFix(app.wsgi_app)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 # app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/webaddon')
 
