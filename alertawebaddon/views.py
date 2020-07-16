@@ -11,54 +11,64 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 db.create_all()
 github_bp = make_github_blueprint()
 
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
+@app.route('/', methods=['GET'])
+def index():
     if not github.authorized:
         return redirect(url_for("github.login"))
     username = github.get("/user").json()['login']
     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
-            if path == '':
-                return redirect(url_for('environments')) # render_template('index.html')
-            elif path == 'environments':
-                env = db.session.query(Environments).order_by(Environments.id).all()
-                return render_template('snippets/environments.html', env=env)
-            elif path == 'templates':
-                templates = db.session.query(Templates).order_by(Templates.template_id).all()
-                return render_template('snippets/templates.html', templates=templates)
-            elif path == 'topics':
-                topics = db.session.query(
-                    Topics.topic_id,
-                    Topics.topic_name,
-                    Topics.zulip_to,
-                    Topics.zulip_subject,
-                    Templates.template_name) \
-                    .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
-                templates = db.session.query(Templates).order_by(Templates.template_id).all()
-                return render_template('snippets/topics.html', templates=templates, topics=topics)
-            elif path == 'skips':
-                topics_to_skip = db.session.query(
-                    TopicsToSkip.id,
-                    TopicsToSkip.skip,
-                    Environments.name,
-                    Topics.topic_name) \
-                    .filter(TopicsToSkip.environment_id == Environments.id, TopicsToSkip.topic_id == Topics.topic_id) \
-                    .order_by(Environments.id).all()
-                env = db.session.query(Environments).order_by(Environments.id).all()
-                topics = db.session.query(
-                    Topics.topic_id,
-                    Topics.topic_name,
-                    Topics.zulip_to,
-                    Topics.zulip_subject,
-                    Templates.template_name) \
-                    .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
-                return render_template('snippets/topics_skip.html', skip=topics_to_skip, env=env, topics=topics)
-            else:
-                return render_template('404page.html')
+            return render_template('index.html')
     return render_template('403page.html')
+
+# @app.route('/', defaults={'path': ''})
+# @app.route('/<path:path>')
+# def catch_all(path):
+#     if not github.authorized:
+#         return redirect(url_for("github.login"))
+#     username = github.get("/user").json()['login']
+#     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+#     for org in orgs:
+#         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
+#             if path == '':
+#                 return render_template('index.html')
+#             elif path == 'environments':
+#                 env = db.session.query(Environments).order_by(Environments.id).all()
+#                 return render_template('snippets/environments.html', env=env)
+#             elif path == 'templates':
+#                 templates = db.session.query(Templates).order_by(Templates.template_id).all()
+#                 return render_template('snippets/templates.html', templates=templates)
+#             elif path == 'topics':
+#                 topics = db.session.query(
+#                     Topics.topic_id,
+#                     Topics.topic_name,
+#                     Topics.zulip_to,
+#                     Topics.zulip_subject,
+#                     Templates.template_name) \
+#                     .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
+#                 templates = db.session.query(Templates).order_by(Templates.template_id).all()
+#                 return render_template('snippets/topics.html', templates=templates, topics=topics)
+#             elif path == 'skips':
+#                 topics_to_skip = db.session.query(
+#                     TopicsToSkip.id,
+#                     TopicsToSkip.skip,
+#                     Environments.name,
+#                     Topics.topic_name) \
+#                     .filter(TopicsToSkip.environment_id == Environments.id, TopicsToSkip.topic_id == Topics.topic_id) \
+#                     .order_by(Environments.id).all()
+#                 env = db.session.query(Environments).order_by(Environments.id).all()
+#                 topics = db.session.query(
+#                     Topics.topic_id,
+#                     Topics.topic_name,
+#                     Topics.zulip_to,
+#                     Topics.zulip_subject,
+#                     Templates.template_name) \
+#                     .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
+#                 return render_template('snippets/topics_skip.html', skip=topics_to_skip, env=env, topics=topics)
+#             else:
+#                 return render_template('404page.html')
+#     return render_template('403page.html')
 
 
 @app.route('/env/add', methods=['POST'])
