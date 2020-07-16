@@ -1,6 +1,6 @@
 domain: ecs-80-158-23-243.reverse.open-telekom-cloud.com
 extra_parameters: |
-            location / {
+            location /web {
                 if ($scheme = http) {
                     return 301 https://$server_name$request_uri;
                 }
