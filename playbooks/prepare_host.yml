@@ -20,20 +20,13 @@
   hosts: worker_host
   become: yes
   environment:
-#    GITHUB_OAUTH_CLIENT_SECRET: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_SECRET') }}"
-#    GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
-#    APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
-#    DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
-#    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: "{{ lookup('env', 'GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') }}"
-#    OAUTHLIB_INSECURE_TRANSPORT: true
-#    PROXY_PREFIX_PATH: "{{ lookup('env', 'PROXY_PREFIX_PATH') }}"
-    GITHUB_OAUTH_CLIENT_SECRET: b7630ae9d24f885a4d67820162eafcdbc0d7dab9
-    GITHUB_OAUTH_CLIENT_ID: 6c2f37a2568ab34beb8b
-    APP_SECRET_KEY: anyone
-    DATABASE_URL: postgresql://postgres:qwerty12345!@80.158.41.159/alerta
-    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: opentelekomcloud-infra
-    OAUTHLIB_INSECURE_TRANSPORT: false
-    PROXY_PREFIX_PATH: "{{ proxy_prefix }}"
+    GITHUB_OAUTH_CLIENT_SECRET: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_SECRET') }}"
+    GITHUB_OAUTH_CLIENT_ID: "{{ lookup('env', 'GITHUB_OAUTH_CLIENT_ID') }}"
+    APP_SECRET_KEY: "{{ lookup('env', 'APP_SECRET_KEY') }}"
+    DATABASE_URL: "{{ lookup('env', 'DATABASE_URL') }}"
+    GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: "{{ lookup('env', 'GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') }}"
+    OAUTHLIB_INSECURE_TRANSPORT: true
+    PROXY_PREFIX_PATH: "{{ lookup('env', 'PROXY_PREFIX_PATH') }}"
   tasks:
     - name: Update and upgrade apt packages
       apt:

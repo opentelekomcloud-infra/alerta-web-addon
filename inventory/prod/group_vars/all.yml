@@ -1,8 +1,8 @@
 base_path: /home/linux/server/alerta-web-addon
 virtualenv_path: "{{ base_path }}/venv"
-worker_address: 80.158.23.243
-worker_key: /tmp/rancher
 web_server_port: 23456
 skip_nginx: false
-proxy_prefix: /webaddon
-dns: ecs-80-158-23-243.reverse.open-telekom-cloud.com
+worker_address:
+worker_key:
+proxy_prefix:
+dns:
