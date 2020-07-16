@@ -15,9 +15,10 @@ my_blueprint = Blueprint('my_blueprint', __name__, template_folder='templates',
                          url_prefix='/webaddon')
 
 
-@my_blueprint.route('/webaddon')
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@my_blueprint.route('/', defaults={'path': ''})
+@my_blueprint.route('/<path:path>')
+# @app.route('/', defaults={'path': ''})
+# @app.route('/<path:path>')
 def catch_all(path):
     if not github.authorized:
         return redirect(url_for("github.login", _external=True))
