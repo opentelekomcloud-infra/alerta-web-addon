@@ -13,8 +13,8 @@ db.create_all()
 github_bp = make_github_blueprint()
 
 
-@app.route('/webaddon/', defaults={'path': ''})
-@app.route('/webaddon/<path:path>')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 def catch_all(path):
     if not github.authorized:
         return redirect(url_for("github.login", _external=True))
