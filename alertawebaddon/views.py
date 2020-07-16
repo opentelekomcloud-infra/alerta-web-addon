@@ -11,14 +11,10 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 
 db.create_all()
 github_bp = make_github_blueprint()
-my_blueprint = Blueprint('my_blueprint', __name__, template_folder='templates',
-                         url_prefix='/webaddon')
 
 
-@my_blueprint.route('/', defaults={'path': ''})
-@my_blueprint.route('/<path:path>')
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
+@app.route('/webaddon/', defaults={'path': ''})
+@app.route('/webaddon/<path:path>')
 def catch_all(path):
     if not github.authorized:
         return redirect(url_for("github.login", _external=True))
