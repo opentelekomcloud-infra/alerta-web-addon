@@ -50,7 +50,7 @@
         dest: "{{ base_path }}"
         force: yes
         depth: 1
-        version: dispatcher_prefix
+        version: HEAD
 
     - name: Create venv
       pip:
@@ -74,7 +74,7 @@
   vars_files:
   - "./vars/nginx_parameters.yml"
   vars:
-    certbot_admin_email: "a.sidelnikov@t-systems.com"
+    certbot_admin_email: "webaddon@{{ domain }}"
     certbot_create_if_missing: true
     certbot_create_standalone_stop_services: []
     certbot_auto_renew_user: linux
