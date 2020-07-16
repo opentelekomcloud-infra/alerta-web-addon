@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import jsonify, url_for, flash
+from flask import jsonify, url_for, flash, Blueprint
 from flask import render_template, request, redirect
 from flask_dance.contrib.github import make_github_blueprint, github
 
@@ -11,8 +11,11 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 
 db.create_all()
 github_bp = make_github_blueprint()
+my_blueprint = Blueprint('my_blueprint', __name__, template_folder='templates',
+                         url_prefix='/webaddon')
 
 
+@my_blueprint.route('/webaddon')
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
