@@ -32,6 +32,7 @@
     DATABASE_URL: postgresql://postgres:qwerty12345!@80.158.41.159/alerta
     GITHUB_OAUTH_ALLOWED_ORGANIZATIONS: opentelekomcloud-infra
     OAUTHLIB_INSECURE_TRANSPORT: false
+    PROXY_PREFIX_PATH: {{ proxy_prefix }}
   tasks:
     - name: Update and upgrade apt packages
       apt:
