@@ -1,4 +1,4 @@
-domain: ecs-80-158-23-243.reverse.open-telekom-cloud.com
+domain: "{{ dns }}"
 extra_parameters: |
             location {{ proxy_prefix }} {
                 if ($scheme = http) {

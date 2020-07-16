@@ -298,6 +298,11 @@ def skip_update(id):
     return render_template('/snippets/skip_update.html', title='Edit Blackout Status for Topic', form=form)
 
 
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('404page.html')
+
+
 def sort_choices(data: list, filter):
     data.insert(0, data.pop([x for x, y in enumerate(data) if y[0] == filter][0]))
     return data

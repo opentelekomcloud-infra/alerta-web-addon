@@ -5,3 +5,4 @@ worker_key: /tmp/rancher
 web_server_port: 23456
 skip_nginx: false
 proxy_prefix: /webaddon
+dns: ecs-80-158-23-243.reverse.open-telekom-cloud.com
