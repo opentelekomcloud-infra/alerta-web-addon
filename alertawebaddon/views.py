@@ -9,15 +9,15 @@ from alertawebaddon.forms import EnvUpdateForm, TopicUpdateForm, TemplateUpdateF
 from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, get_last_id
 
 db.create_all()
-github_bp = make_github_blueprint()
+github_bp = make_github_blueprint(redirect_to=app.config['PROXY_PREFIX_PATH'])
 
 
 @app.route('/', methods=['GET'])
 def index():
     if not github.authorized:
-        return redirect(url_for("github.login"))
-    username = github.get("/user").json()['login']
-    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+        return redirect(url_for('github.login'))
+    username = github.get('/user').json()['login']
+    orgs = json.loads(github.get(f'/users/{username}/orgs').text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             return render_template('index.html')
@@ -27,9 +27,9 @@ def index():
 @app.route('/environments', methods=['GET'])
 def environments():
     if not github.authorized:
-        return redirect(url_for("github.login"))
-    username = github.get("/user").json()['login']
-    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+        return redirect(url_for('github.login'))
+    username = github.get('/user').json()['login']
+    orgs = json.loads(github.get(f'/users/{username}/orgs').text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             env = db.session.query(Environments).order_by(Environments.id).all()
@@ -40,9 +40,9 @@ def environments():
 @app.route('/templates', methods=['GET'])
 def templates():
     if not github.authorized:
-        return redirect(url_for("github.login"))
-    username = github.get("/user").json()['login']
-    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+        return redirect(url_for('github.login'))
+    username = github.get('/user').json()['login']
+    orgs = json.loads(github.get(f'/users/{username}/orgs').text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             templates = db.session.query(Templates).order_by(Templates.template_id).all()
@@ -53,9 +53,9 @@ def templates():
 @app.route('/topics', methods=['GET'])
 def topics():
     if not github.authorized:
-        return redirect(url_for("github.login"))
-    username = github.get("/user").json()['login']
-    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+        return redirect(url_for('github.login'))
+    username = github.get('/user').json()['login']
+    orgs = json.loads(github.get(f'/users/{username}/orgs').text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             topics = db.session.query(
@@ -73,9 +73,9 @@ def topics():
 @app.route('/skips', methods=['GET'])
 def skips():
     if not github.authorized:
-        return redirect(url_for("github.login"))
-    username = github.get("/user").json()['login']
-    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+        return redirect(url_for('github.login'))
+    username = github.get('/user').json()['login']
+    orgs = json.loads(github.get(f'/users/{username}/orgs').text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             topics_to_skip = db.session.query(
@@ -107,7 +107,7 @@ def env_add():
             db.session.commit()
             return redirect(url_for('environments'))
         except Exception as Ex:
-            return "There was a problem adding new record."
+            return 'There was a problem adding new record.'
     else:
         flash('Empty environment name.')
         return redirect(url_for('environments'))
@@ -120,7 +120,7 @@ def env_delete(id):
         db.session.delete(environment)
         db.session.commit()
         return jsonify(status='ok')
-    return render_template('/snippets/env_delete.html', title="Deleting Environment Permanently", env=environment)
+    return render_template('/snippets/env_delete.html', title='Deleting Environment Permanently', env=environment)
 
 
 @app.route('/env/update/<int:id>', methods=['GET', 'POST'])
@@ -136,7 +136,7 @@ def env_update(id):
     else:
         data = json.dumps(form.errors, ensure_ascii=False)
         return jsonify(data)
-    return render_template('/snippets/env_update.html', title="Edit Environment", form=form)
+    return render_template('/snippets/env_update.html', title='Edit Environment', form=form)
 
 
 @app.route('/topic/add', methods=['POST'])
