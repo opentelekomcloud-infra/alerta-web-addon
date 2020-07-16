@@ -1,7 +1,6 @@
 import json
-import os
 
-from flask import jsonify, url_for, flash, Blueprint
+from flask import jsonify, url_for, flash
 from flask import render_template, request, redirect
 from flask_dance.contrib.github import make_github_blueprint, github
 
@@ -11,10 +10,10 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 
 db.create_all()
 github_bp = make_github_blueprint()
-web = Blueprint('web', __name__)
 
-@web.route('/', defaults={'path': ''})
-@web.route('/<path:path>')
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 def catch_all(path):
     if not github.authorized:
         return redirect(url_for("github.login"))

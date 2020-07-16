@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
@@ -30,5 +31,13 @@ app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+app.config['APPLICATION_ROOT'] = '/web'
+
+def simple(env, resp):
+    resp(b'200 OK', [(b'Content-Type', b'text/plain')])
+    return [b'Hello WSGI World']
+
+app.wsgi_app = DispatcherMiddleware(simple, {app.config['APPLICATION_ROOT']: app.wsgi_app})
 
 db = SQLAlchemy(app)
