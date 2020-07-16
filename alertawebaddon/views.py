@@ -11,10 +11,10 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 
 db.create_all()
 github_bp = make_github_blueprint()
+web = Blueprint('web', __name__)
 
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@web.route('/', defaults={'path': ''})
+@web.route('/<path:path>')
 def catch_all(path):
     if not github.authorized:
         return redirect(url_for("github.login"))
