@@ -20,7 +20,7 @@ def index():
     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
-            return render_template('index.html')
+            return redirect(url_for('index'))
     return render_template('403page.html')
 
 
