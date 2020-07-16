@@ -22,7 +22,7 @@ def catch_all(path):
     for org in orgs:
         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
             if path == '':
-                return render_template('index.html')
+                return redirect(url_for('environments')) # render_template('index.html')
             elif path == 'environments':
                 env = db.session.query(Environments).order_by(Environments.id).all()
                 return render_template('snippets/environments.html', env=env)
@@ -74,7 +74,7 @@ def env_add():
             return "There was a problem adding new record."
     else:
         flash('Empty environment name.')
-        return redirect(url_for('environments'))
+        return redirect(url_for('environments', _external=True))
 
 
 @app.route('/env/delete/<int:id>', methods=['GET', 'POST'])

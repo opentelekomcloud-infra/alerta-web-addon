@@ -32,12 +32,24 @@ app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-app.config['APPLICATION_ROOT'] = '/web'
+class PrefixMiddleware(object):
 
-def simple(env, resp):
-    resp(b'200 OK', [(b'Content-Type', b'text/plain')])
-    return [b'Hello WSGI World']
+    def __init__(self, app, prefix=''):
+        self.app = app
+        self.prefix = prefix
 
-app.wsgi_app = DispatcherMiddleware(simple, {app.config['APPLICATION_ROOT']: app.wsgi_app})
+    def __call__(self, environ, start_response):
+
+        if self.prefix != '' and not environ['PATH_INFO'].startswith(self.prefix):
+            environ['PATH_INFO'] = self.prefix + environ['PATH_INFO']
+        if environ['PATH_INFO'].startswith(self.prefix):
+            environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
+            environ['SCRIPT_NAME'] = self.prefix
+            return self.app(environ, start_response)
+        else:
+            start_response('404', [('Content-Type', 'text/plain')])
+            return ["This url does not belong to the app.".encode()]
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/web')
 
 db = SQLAlchemy(app)
