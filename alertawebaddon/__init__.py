@@ -3,7 +3,6 @@ from argparse import ArgumentParser
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 AGP = ArgumentParser(prog='Web server for alerta', description='')
@@ -29,8 +28,8 @@ app.config['GITHUB_OAUTH_ALLOWED_ORGANIZATIONS'] = \
     os.environ.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS', default='opentelekomcloud-infra')
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf'
+app.config['PROXY_PREFIX_PATH'] = os.environ.get('PROXY_PREFIX_PATH')
 
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 class PrefixMiddleware(object):
 
@@ -40,8 +39,6 @@ class PrefixMiddleware(object):
 
     def __call__(self, environ, start_response):
 
-        if self.prefix != '' and not environ['PATH_INFO'].startswith(self.prefix):
-            environ['PATH_INFO'] = self.prefix + environ['PATH_INFO']
         if environ['PATH_INFO'].startswith(self.prefix):
             environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
             environ['SCRIPT_NAME'] = self.prefix
@@ -50,6 +47,8 @@ class PrefixMiddleware(object):
             start_response('404', [('Content-Type', 'text/plain')])
             return ["This url does not belong to the app.".encode()]
 
-app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/web')
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=app.config['PROXY_PREFIX_PATH'])
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 db = SQLAlchemy(app)

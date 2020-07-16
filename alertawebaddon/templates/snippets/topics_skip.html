@@ -41,7 +41,7 @@
         </table>
         {% endif %}
       </div>
-      <form action="/skip/add" method="POST">
+      <form action="{{ url_for('skip_add') }}" method="POST">
         <div class="form-group">
           <label for="skipFormControlSelect2">Add Record: <br>Skip?</label>
           <select class="form-control" id="skipFormControlSelect2" name="newSkip">

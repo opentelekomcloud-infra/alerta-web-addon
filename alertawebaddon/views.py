@@ -1,6 +1,6 @@
 import json
 
-from flask import jsonify, url_for, flash, Blueprint
+from flask import jsonify, url_for, flash
 from flask import render_template, request, redirect
 from flask_dance.contrib.github import make_github_blueprint, github
 
@@ -10,10 +10,9 @@ from alertawebaddon.model import Environments, Topics, Templates, TopicsToSkip, 
 
 db.create_all()
 github_bp = make_github_blueprint()
-bp = Blueprint('burritos', __name__, template_folder='templates')
-app.register_blueprint(bp, url_prefix='/web')
 
-@bp.route('/', methods=['GET'])
+
+@app.route('/', methods=['GET'])
 def index():
     if not github.authorized:
         return redirect(url_for("github.login"))
@@ -24,53 +23,78 @@ def index():
             return render_template('index.html')
     return render_template('403page.html')
 
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# def catch_all(path):
-#     if not github.authorized:
-#         return redirect(url_for("github.login"))
-#     username = github.get("/user").json()['login']
-#     orgs = json.loads(github.get(f"/users/{username}/orgs").text)
-#     for org in orgs:
-#         if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
-#             if path == '':
-#                 return render_template('index.html')
-#             elif path == 'environments':
-#                 env = db.session.query(Environments).order_by(Environments.id).all()
-#                 return render_template('snippets/environments.html', env=env)
-#             elif path == 'templates':
-#                 templates = db.session.query(Templates).order_by(Templates.template_id).all()
-#                 return render_template('snippets/templates.html', templates=templates)
-#             elif path == 'topics':
-#                 topics = db.session.query(
-#                     Topics.topic_id,
-#                     Topics.topic_name,
-#                     Topics.zulip_to,
-#                     Topics.zulip_subject,
-#                     Templates.template_name) \
-#                     .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
-#                 templates = db.session.query(Templates).order_by(Templates.template_id).all()
-#                 return render_template('snippets/topics.html', templates=templates, topics=topics)
-#             elif path == 'skips':
-#                 topics_to_skip = db.session.query(
-#                     TopicsToSkip.id,
-#                     TopicsToSkip.skip,
-#                     Environments.name,
-#                     Topics.topic_name) \
-#                     .filter(TopicsToSkip.environment_id == Environments.id, TopicsToSkip.topic_id == Topics.topic_id) \
-#                     .order_by(Environments.id).all()
-#                 env = db.session.query(Environments).order_by(Environments.id).all()
-#                 topics = db.session.query(
-#                     Topics.topic_id,
-#                     Topics.topic_name,
-#                     Topics.zulip_to,
-#                     Topics.zulip_subject,
-#                     Templates.template_name) \
-#                     .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
-#                 return render_template('snippets/topics_skip.html', skip=topics_to_skip, env=env, topics=topics)
-#             else:
-#                 return render_template('404page.html')
-#     return render_template('403page.html')
+
+@app.route('/environments', methods=['GET'])
+def environments():
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+    username = github.get("/user").json()['login']
+    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+    for org in orgs:
+        if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
+            env = db.session.query(Environments).order_by(Environments.id).all()
+            return render_template('snippets/environments.html', env=env)
+    return render_template('403page.html')
+
+
+@app.route('/templates', methods=['GET'])
+def templates():
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+    username = github.get("/user").json()['login']
+    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+    for org in orgs:
+        if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
+            templates = db.session.query(Templates).order_by(Templates.template_id).all()
+            return render_template('snippets/templates.html', templates=templates)
+    return render_template('403page.html')
+
+
+@app.route('/topics', methods=['GET'])
+def topics():
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+    username = github.get("/user").json()['login']
+    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+    for org in orgs:
+        if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
+            topics = db.session.query(
+                Topics.topic_id,
+                Topics.topic_name,
+                Topics.zulip_to,
+                Topics.zulip_subject,
+                Templates.template_name) \
+                .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
+            templates = db.session.query(Templates).order_by(Templates.template_id).all()
+            return render_template('snippets/topics.html', templates=templates, topics=topics)
+    return render_template('403page.html')
+
+
+@app.route('/skips', methods=['GET'])
+def skips():
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+    username = github.get("/user").json()['login']
+    orgs = json.loads(github.get(f"/users/{username}/orgs").text)
+    for org in orgs:
+        if app.config.get('GITHUB_OAUTH_ALLOWED_ORGANIZATIONS') in org['login']:
+            topics_to_skip = db.session.query(
+                TopicsToSkip.id,
+                TopicsToSkip.skip,
+                Environments.name,
+                Topics.topic_name) \
+                .filter(TopicsToSkip.environment_id == Environments.id, TopicsToSkip.topic_id == Topics.topic_id) \
+                .order_by(Environments.id).all()
+            env = db.session.query(Environments).order_by(Environments.id).all()
+            topics = db.session.query(
+                Topics.topic_id,
+                Topics.topic_name,
+                Topics.zulip_to,
+                Topics.zulip_subject,
+                Templates.template_name) \
+                .filter(Topics.templ_id == Templates.template_id).order_by(Topics.topic_id).all()
+            return render_template('snippets/topics_skip.html', skip=topics_to_skip, env=env, topics=topics)
+    return render_template('403page.html')
 
 
 @app.route('/env/add', methods=['POST'])
@@ -81,12 +105,12 @@ def env_add():
         try:
             db.session.add(new_environment)
             db.session.commit()
-            return redirect('/environments')
+            return redirect(url_for('environments'))
         except Exception as Ex:
             return "There was a problem adding new record."
     else:
         flash('Empty environment name.')
-        return redirect(url_for('environments', _external=True))
+        return redirect(url_for('environments'))
 
 
 @app.route('/env/delete/<int:id>', methods=['GET', 'POST'])
@@ -128,7 +152,7 @@ def topic_add():
         try:
             db.session.add(new_topic)
             db.session.commit()
-            return redirect('/topics')
+            return redirect(url_for('topics'))
         except Exception as Ex:
             return 'There was a problem adding new record.'
     else:
@@ -180,7 +204,7 @@ def template_add():
         try:
             db.session.add(new_topic)
             db.session.commit()
-            return redirect('/templates')
+            return redirect(url_for('templates'))
         except Exception as Ex:
             return 'There was a problem adding new record.'
     else:
@@ -228,7 +252,7 @@ def skip_add():
         try:
             db.session.add(new_skip)
             db.session.commit()
-            return redirect('/skips')
+            return redirect(url_for('skips'))
         except Exception as Ex:
             return 'There was a problem adding new record.'
     else:

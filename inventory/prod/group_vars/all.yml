@@ -4,3 +4,4 @@ worker_address: 80.158.23.243
 worker_key: /tmp/rancher
 web_server_port: 23456
 skip_nginx: false
+proxy_prefix: /webaddon
