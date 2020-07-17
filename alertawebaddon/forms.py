@@ -13,14 +13,10 @@ class TopicUpdateForm(FlaskForm):
     fzulip_to = StringField('ZulipTo:', validators=[DataRequired()])
     fzulip_subject = StringField('ZulipSubject:', validators=[DataRequired()])
     ftemplate = SelectField('Template:', validate_choice=False)
+    fenvironment_name = SelectField('Environment name:', validate_choice=False)
+    fskip = BooleanField('Skip status:')
 
 
 class TemplateUpdateForm(FlaskForm):
     ftemplate_name = StringField('Name:', validators=[DataRequired()])
     ftemplate_data = StringField('TemplateData:', widget=TextArea(), validators=[DataRequired()])
-
-
-class SkipUpdateForm(FlaskForm):
-    fskip = BooleanField('Skip status:')
-    ftopic_name = SelectField('Topic name:', validate_choice=False)
-    fenvironment_name = SelectField('Environment name:', validate_choice=False)

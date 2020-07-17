@@ -24,6 +24,8 @@
               <th>Zulip To</th>
               <th>Zulip Subject</th>
               <th>Template</th>
+              <th>Environment</th>
+              <th>Skip</th>
               <th></th>
               <th></th>
             </tr>
@@ -36,6 +38,8 @@
               <td class="text-left" id="zulip_to">{{ item.zulip_to }}</td>
               <td class="text-left" id="zulip_subject">{{ item.zulip_subject }}</td>
               <td class="text-left" id="topic_template">{{ item.template_name }}</td>
+              <td class="text-left" id="topic_env">{{ item.name }}</td>
+              <td class="text-left" id="topic_skip">{{ item.skip }}</td>
               <td class="text-right"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('topic_update', id=item.topic_id) }}" role="button" href="#">Update</a></td>
               <td class="text-left"><a class="btn btn-secondary edit-modal-opener" data-toggle="modal" data-whatever="{{ url_for('topic_delete', id=item.topic_id) }}" role="button" href="#">Delete</a></td>
             </tr>
@@ -58,6 +62,18 @@
                 <option value="{{ item.template_name }}" SELECTED>{{ item.template_name }}</option>
             {% endfor %}
           </select>
+          <label for="topicEnvFormControlSelect2">Select Environment for New Skip</label>
+          <select class="form-control" id="topicEnvFormControlSelect2" name="newTopicEnv">
+            {% for item in env %}
+                <option value="{{ item.name }}" SELECTED>{{ item.name }}</option>
+            {% endfor %}
+          </select>
+          <label for="topicSkipFormControlSelect2">Skip:</label>
+          <select class="form-control" id="topicSkipFormControlSelect2" name="newTopicSkip">
+            <option selected value="0">False</option>
+            <option value="1">True</option>
+          </select>
+
         </div>
         <button type="submit" class="btn btn-secondary">Add</button>
       </form>
