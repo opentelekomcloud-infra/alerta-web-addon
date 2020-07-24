@@ -21,8 +21,6 @@ or by playbook:
 - worker_address
 - worker_key
 - skip_nginx (false by default)
-- proxy_prefix `if app runs under reverse proxy sub location`
-- dns `dns record assigned to ip, for certbot`
 
 ##### server args:
 - `--port` by default = 23456
