@@ -9,6 +9,7 @@ before run:
 - export DATABASE_URL=postgresql://...
 - export OAUTHLIB_INSECURE_TRANSPORT=true (if not https)
 - export PROXY_PREFIX_PATH=/some_location
+- export GF_AUTH_GITHUB_ALLOWED_ORGANIZATIONS=some_org
 
 `python server.py --port ...`
 
