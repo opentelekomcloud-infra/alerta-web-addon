@@ -123,8 +123,8 @@ def topic_add():
             and request.form['newTopicEnv'] != '' and request.form['newTopicSkip'] != '':
         new_topic = Topics(topic_id=get_last_id(db.session, Topics)[0] + 1,
                            topic_name=request.form['newTopicName'],
-                           zulip_to=request.form['newTopicName'],
-                           zulip_subject=request.form['newTopicName'],
+                           zulip_to=request.form['newTopicZulipTo'],
+                           zulip_subject=request.form['newTopicZulipSubject'],
                            template_id=db.session.query(Templates.template_id).
                            filter(request.form['newTopicTemplate'] == Templates.template_name).scalar(),
                            environment_id=db.session.query(Environments.id).
