@@ -11,7 +11,7 @@ Bootstrap(app)
 
 
 def main():
-    Thread(target=app.run, kwargs={'port': args.port, 'debug': args.debug}).start()
+    Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': args.port, 'debug': args.debug}).start()
 
 
 if __name__ == '__main__':
